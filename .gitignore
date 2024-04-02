@@ -1,0 +1,33 @@
+# Dependencias
+/node_modules
+
+# Archivos generados
+/dist
+/build
+
+# Archivos de configuración
+.env
+
+# Logs
+/logs
+
+# Archivos de respaldo
+*.bak
+*.swp
+*.tmp
+
+# Archivos de IDE
+.vscode
+.idea
+
+# Archivos de compilación
+*.log
+*.pid
+*.out
+
+# Archivos de prueba
+/coverage
+
+# Otros archivos generados
+.DS_Store
+Thumbs.db
