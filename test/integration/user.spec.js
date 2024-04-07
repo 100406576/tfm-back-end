@@ -15,7 +15,7 @@ describe("Users", () => {
     server.close(done);
     });
 
-    test("get users", async () => {
+    it("get users", async () => {
       const response = await request(app).get("/api/v1/users").send();
       expect(response.statusCode).toBe(200);
       expect(response.body.users[0].username).toStrictEqual('oli')

@@ -15,12 +15,12 @@ describe("GET /ping", () => {
     server.close(done);
     });
 
-    test("should respond with a 200 status code", async () => {
+    it("should respond with a 200 status code", async () => {
       const response = await request(app).get("/api/v1/ping").send();
       expect(response.statusCode).toBe(200);
     });
   
-    test("should respond pong", async () => {
+    it("should respond pong", async () => {
       const response = await request(app).get("/api/v1/ping").send();
       expect(response.body).toStrictEqual({
         "message": "pong"
