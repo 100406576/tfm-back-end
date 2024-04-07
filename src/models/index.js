@@ -7,8 +7,9 @@ const sequelize = new Sequelize(DB_DATABASE, DB_USERNAME, DB_PASSWORD, {
     port: DB_PORT
 });
 
+export default sequelize;
 
-async function testConnection() {
+/*async function testConnection() {
     try {
         await sequelize.authenticate();
         console.log("All good!!")
@@ -17,6 +18,4 @@ async function testConnection() {
     }
 }
 
-testConnection();
-
-export default sequelize;
+testConnection();*/
