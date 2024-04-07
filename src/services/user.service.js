@@ -1,4 +1,4 @@
-import User from "../models/user.model.js"
+const User = require("../models/user.model.js");
 
 const readUsers = async function() {
     return User.findAll();
@@ -6,10 +6,10 @@ const readUsers = async function() {
 
 const createUser = async function(dataUser) {
     await User.sync();
-    await User.create(dataUser)
+    await User.create(dataUser);
 }
 
-export default {
+module.exports = {
     readUsers,
     createUser
 }

@@ -1,5 +1,5 @@
-import { Sequelize } from "sequelize";
-import { DB_HOST, DB_DATABASE, DB_DIALECT, DB_PASSWORD, DB_USERNAME, DB_PORT } from "../config/config.js";
+const Sequelize = require("sequelize");
+const { DB_HOST, DB_DATABASE, DB_DIALECT, DB_PASSWORD, DB_USERNAME, DB_PORT } = require("../config/config.js");
 
 const sequelize = new Sequelize(DB_DATABASE, DB_USERNAME, DB_PASSWORD, {
     host: DB_HOST,
@@ -7,7 +7,7 @@ const sequelize = new Sequelize(DB_DATABASE, DB_USERNAME, DB_PASSWORD, {
     port: DB_PORT
 });
 
-export default sequelize;
+module.exports = sequelize;
 
 /*async function testConnection() {
     try {

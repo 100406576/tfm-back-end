@@ -1,6 +1,6 @@
-import userService from "../services/user.service.js"
+const userService = require("../services/user.service.js");
 
-export const readUsers = async (req, res) => {
+exports.readUsers = async (req, res) => {
     try {
         const response = await userService.readUsers();
         res.json({'users': response});
@@ -13,7 +13,7 @@ export const readUsers = async (req, res) => {
     }
 };
 
-export const createUser = async (req, res) => {
+exports.createUser = async (req, res) => {
     try {
         const dataUser = req.body;
         await userService.createUser(dataUser)

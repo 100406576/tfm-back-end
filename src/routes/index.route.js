@@ -1,10 +1,10 @@
-import { Router } from 'express';
-import pingRoute from '../routes/ping.route.js'
-import userRoute from '../routes/user.route.js'
+const express = require('express');
+const pingRoute = require('../routes/ping.route.js');
+const userRoute = require('../routes/user.route.js');
 
-const router = Router();
+const router = express.Router();
 
 router.use('/', pingRoute);
 router.use('/', userRoute);
 
-export default router;
+module.exports = router;

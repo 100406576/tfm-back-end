@@ -2,6 +2,6 @@ const sayPong = async function() {
     return 'pong'
 }
 
-export default {
+module.exports = {
     sayPong
 }
