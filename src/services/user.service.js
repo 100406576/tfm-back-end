@@ -2,9 +2,9 @@ const User = require("../models/user.model.js");
 const NotFoundError = require('../errors/notFoundError.js')
 const ConflictError = require('../errors/conflictError.js')
 
-const readUsers = async function() {
+/*const readUsers = async function() {
     return User.findAll();
-}
+}*/
 
 const readUser = async function(username) {
     const user = await User.findOne({ where: { username: username } });
@@ -31,7 +31,8 @@ const createUser = async function(dataUser) {
 }
 
 module.exports = {
-    readUsers,
+    //readUsers,
+    userExists,
     readUser,
     createUser
 }

@@ -1,7 +1,7 @@
 const userService = require("../services/user.service.js");
 const bcryptjs = require('bcryptjs');
 
-const readUsers = async (req, res) => {
+/*const readUsers = async (req, res) => {
     try {
         const response = await userService.readUsers();
         res.json({'users': response});
@@ -12,7 +12,7 @@ const readUsers = async (req, res) => {
             error: error.message,
         });
     }
-};
+};*/
 
 const readUser = async (req, res, next) => {
     try {
@@ -38,7 +38,7 @@ const createUser = async (req, res, next) => {
 };
 
 module.exports = {
-    readUsers,
+    //readUsers,
     readUser,
     createUser
 }

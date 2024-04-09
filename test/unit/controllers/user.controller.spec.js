@@ -9,7 +9,7 @@ jest.mock('../../../src/services/user.service.js');
 app.get('/users', readUsers);
 
 describe('User Controller', () => {
-    it('should return a list of users', async () => {
+    /*it('Read users', async () => {
         const mockUsers = [
             { username: 'testuser1', email: 'testuser1@example.com' },
             { username: 'testuser2', email: 'testuser2@example.com' }
@@ -20,5 +20,5 @@ describe('User Controller', () => {
 
         expect(res.statusCode).toEqual(200);
         expect(res.body).toHaveProperty('users', mockUsers);
-    });
+    });*/
 });
