@@ -1,5 +1,6 @@
 const express = require('express');
 const indexRoutes = require('./routes/index.route.js');
+const errorHandler = require('./middlewares/errorHandler.js');
 
 const app = express();
 
@@ -7,15 +8,9 @@ const app = express();
 app.use(express.json());
 
 // Routes
-app.use('/api/v1', indexRoutes);
+app.use('/', indexRoutes);
 
 /* Error handler middleware */
-app.use((err, req, res, next) => {
-    const statusCode = err.statusCode || 500;
-    console.error(err.message, err.stack);
-    res.status(statusCode).json({'message': err.message});
-    
-    return;
-});
+app.use(errorHandler);
 
 module.exports = app;

@@ -10,6 +10,14 @@ User.init(
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        lastName: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         username: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -22,9 +30,39 @@ User.init(
         email: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true,
             validate: {
                 isEmail: true,
+            },
+        },
+        phoneNumber: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            validate: {
+                is: {
+                    args: /^[0-9]{9}$/,
+                    msg: "The phone number must have 9 numeric digits"
+                }
+            }
+        },
+        dni: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            validate: {
+                is: {
+                    args: /^[0-9]{8}[A-Z]$/i,
+                    msg: "The DNI must have 8 digits followed by a letter"
+                }
+            },
+            unique: true,
+        },
+        gender: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            validate: {
+                isIn: {
+                    args: [['male', 'female']],
+                    msg: "The gender must be 'male' or 'female'"
+                }
             }
         },
     },
