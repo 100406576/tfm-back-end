@@ -24,7 +24,7 @@ const userExists = async function(username) {
 
 const createUser = async function(dataUser) {
     await User.sync();
-    if (await userExists) {
+    if (await userExists(dataUser.username)) {
         throw new ConflictError('Username already exists');
     }
     await User.create(dataUser);

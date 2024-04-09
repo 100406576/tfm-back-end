@@ -1,4 +1,5 @@
 const userService = require("../services/user.service.js");
+const bcryptjs = require('bcryptjs');
 
 const readUsers = async (req, res) => {
     try {
@@ -26,7 +27,8 @@ const readUser = async (req, res, next) => {
 const createUser = async (req, res, next) => {
     try {
         const dataUser = req.body;
-        await userService.createUser(dataUser)
+        req.body.password = bcryptjs.hashSync(req.body.password);
+        await userService.createUser(dataUser);
         res.status(201).json({
             message: "User created",
         });
