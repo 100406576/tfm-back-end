@@ -27,7 +27,7 @@ const createUser = async function(dataUser) {
     if (await userExists(dataUser.username)) {
         throw new ConflictError('Username already exists');
     }
-    await User.create(dataUser);
+    return await User.create(dataUser);
 }
 
 module.exports = {

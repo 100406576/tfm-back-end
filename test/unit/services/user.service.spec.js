@@ -25,7 +25,7 @@ describe('User Service', () => {
 
         expect(user).toEqual(mockUser);
     });
-    test('readUser KO User not found', async () => {
+    test('readUser KO - User not found', async () => {
         User.findOne.mockResolvedValue(null);
         
         try {
@@ -51,12 +51,18 @@ describe('User Service', () => {
         User.findOne.mockResolvedValue(null);
         User.create.mockResolvedValue(mockUser);
 
-        await expect(createUser(mockUser)).resolves.toBeUndefined();
+        const user = await createUser(mockUser);
+        expect(user).toEqual(mockUser);
     });
-    test('createUser KO Already Exists', async () => {
+    test('createUser KO - Already Exists', async () => {
         const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', password: "1234", email: 'testuser1@example.com' };
-        User.findOne.mockResolvedValue(null);
+        User.findOne.mockResolvedValue(mockUser);
         User.create.mockResolvedValue(mockUser);
-        await expect(createUser(mockUser)).resolves.toBeUndefined();
+        try {
+            await createUser(mockUser);
+        } catch (error) {
+            expect(error).toBeInstanceOf(ConflictError);
+            expect(error.message).toBe('Username already exists');
+        }
     });
 });

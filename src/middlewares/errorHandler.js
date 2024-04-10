@@ -3,7 +3,7 @@ const NotFoundError = require('../errors/notFoundError.js')
 const ConflictError = require('../errors/conflictError.js')
 
 const errorHandler = (err, req, res, next) => {
-    console.log(err);
+    //console.log(err);
     let statusCode;
     if (err instanceof Sequelize.ValidationError) {
         statusCode = 400;
