@@ -1,5 +1,9 @@
 const userService = require("../services/user.service.js");
+const sequelize = require('sequelize')
 const bcryptjs = require('bcryptjs');
+const NotFoundError = require('../errors/notFoundError.js')
+const ConflictError = require('../errors/conflictError.js');
+const { Sequelize, ValidationError } = require("sequelize");
 
 /*const readUsers = async (req, res) => {
     try {
@@ -18,6 +22,11 @@ const readUser = async (req, res, next) => {
     try {
         const username = req.params.username;
         const user = await userService.readUser(username);
+
+        if (!user) {
+            throw new NotFoundError('User not found');
+        }
+
         res.status(200).json(user);
     } catch (error) {
         next(error);
@@ -27,7 +36,18 @@ const readUser = async (req, res, next) => {
 const createUser = async (req, res, next) => {
     try {
         const dataUser = req.body;
-        req.body.password = bcryptjs.hashSync(req.body.password);
+        const user = await userService.readUser(dataUser.username);
+
+        if (user) {
+            throw new ConflictError('Username already exists');
+        }
+
+        if(dataUser.password) {
+            dataUser.password = bcryptjs.hashSync(dataUser.password);
+        } else {
+            throw new Sequelize.ValidationError('Password is not defined');
+        }
+
         await userService.createUser(dataUser);
         res.status(201).json({
             message: "User created",
@@ -37,8 +57,17 @@ const createUser = async (req, res, next) => {
     }
 };
 
+const loginUser = async (req, res, next) => {
+    try {
+        //TODO
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     //readUsers,
     readUser,
-    createUser
+    createUser,
+    loginUser
 }

@@ -4,6 +4,7 @@ const bcryptjs = require('bcryptjs');
 const userService = require('../../../src/services/user.service.js');
 const NotFoundError = require('../../../src/errors/notFoundError.js')
 const ConflictError = require('../../../src/errors/conflictError.js')
+const { Sequelize, ValidationError } = require("sequelize");
 
 jest.mock('../../../src/services/user.service.js');
 jest.mock('bcryptjs', () => ({
@@ -33,10 +34,7 @@ describe('User Controller', () => {
         expect(res.body).toEqual(mockUser);
     });
     test('Read user KO - User not found', async () => {
-        userService.readUser.mockImplementation(() => {
-            throw new NotFoundError('User not found');
-        });
-    
+        userService.readUser.mockResolvedValue(null);
         try {
             await request(app).get('/users/nonexistentuser');
         } catch (error) {
@@ -46,6 +44,7 @@ describe('User Controller', () => {
     });
     test('Create user OK', async () => {
         const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', password: "password", email: 'testuser1@example.com' };
+        userService.readUser.mockResolvedValue(null);
         userService.createUser.mockResolvedValue(mockUser);
 
         const res = await request(app)
@@ -57,11 +56,8 @@ describe('User Controller', () => {
         expect(res.body).toHaveProperty('message', 'User created');
     });
     test('Create user KO - Username already exists', async () => {
-        userService.createUser.mockImplementation(() => {
-            throw new ConflictError('Username already exists');
-        });
-    
-        const mockUser = { username: 'testuser1', email: 'testuser1@example.com', password: 'password' };
+        const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', password: "password", email: 'testuser1@example.com' };
+        userService.readUser.mockResolvedValue(mockUser);
     
         try {
             const res = await request(app)
@@ -71,6 +67,37 @@ describe('User Controller', () => {
         } catch (error) {
             expect(error).toBeInstanceOf(ConflictError);
             expect(error.message).toBe('Username already exists');
+        }
+    });
+    test('Create user KO - Bad Request no password', async () => {
+        const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', email: 'testuser1@example.com' };
+        userService.readUser.mockResolvedValue(mockUser);
+
+        try {
+            const res = await request(app)
+                .post('/users')
+                .set('Content-Type', 'application/json')
+                .send(mockUser);
+        } catch (error) {
+            expect(error).toBeInstanceOf(ValidationError);
+            expect(error.message).toBe('Password is not defined');
+        }
+    });
+    test('Create user KO - Bad Request wrong email format', async () => {
+        const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', password: "password", email: 'testuser1' };
+        userService.readUser.mockResolvedValue(null);
+        userService.createUser.mockImplementation(() => {
+            throw new Sequelize.ValidationError();
+        });
+
+        try {
+            const res = await request(app)
+                .post('/users')
+                .set('Content-Type', 'application/json')
+                .send(mockUser);
+        } catch (error) {
+            expect(error).toBeInstanceOf(Sequelize.ValidationError);
+            expect(error.message).toBe('Password is not defined');
         }
     });
 });

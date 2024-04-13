@@ -25,44 +25,18 @@ describe('User Service', () => {
 
         expect(user).toEqual(mockUser);
     });
-    test('readUser KO - User not found', async () => {
+    test('readUser OK - But user not found', async () => {
         User.findOne.mockResolvedValue(null);
         
-        try {
-            await readUser('testuser1');
-        } catch (error) {
-            expect(error).toBeInstanceOf(NotFoundError);
-            expect(error.message).toBe('User not found');
-        }
-    });
-    test('userExists', async () => {
-        const mockUser = { username: 'testuser1', email: 'testuser1@example.com' };
-        
-        User.findOne.mockResolvedValue(mockUser);
-        let exists = await userExists('testuser1');
-        expect(exists).toBe(true);
-        
-        User.findOne.mockResolvedValue(null);
-        exists = await userExists('testuser1');
-        expect(exists).toBe(false);
+        const user = await readUser('testuser1');
+
+        expect(user).toBe(null);
     });
     test('createUser OK', async () => {
         const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', password: "1234", email: 'testuser1@example.com' };
-        User.findOne.mockResolvedValue(null);
         User.create.mockResolvedValue(mockUser);
 
         const user = await createUser(mockUser);
         expect(user).toEqual(mockUser);
-    });
-    test('createUser KO - Already Exists', async () => {
-        const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', password: "1234", email: 'testuser1@example.com' };
-        User.findOne.mockResolvedValue(mockUser);
-        User.create.mockResolvedValue(mockUser);
-        try {
-            await createUser(mockUser);
-        } catch (error) {
-            expect(error).toBeInstanceOf(ConflictError);
-            expect(error.message).toBe('Username already exists');
-        }
     });
 });
