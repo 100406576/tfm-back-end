@@ -1,15 +1,11 @@
 const request = require('supertest');
 const app = require('../../../src/app.js');
-const bcryptjs = require('bcryptjs');
 const userService = require('../../../src/services/user.service.js');
-const NotFoundError = require('../../../src/errors/notFoundError.js')
-const ConflictError = require('../../../src/errors/conflictError.js')
-const { Sequelize, ValidationError } = require("sequelize");
+const NotFoundError = require('../../../src/errors/notFound.error.js')
+const ConflictError = require('../../../src/errors/conflict.error.js')
+const { ValidationError } = require("sequelize");
 
 jest.mock('../../../src/services/user.service.js');
-jest.mock('bcryptjs', () => ({
-    hashSync: jest.fn(() => 'hashedPassword'),
-}));
 
 describe('User Controller', () => {
     /*test('Read users', async () => {
@@ -87,7 +83,7 @@ describe('User Controller', () => {
         const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', password: "password", email: 'testuser1' };
         userService.readUser.mockResolvedValue(null);
         userService.createUser.mockImplementation(() => {
-            throw new Sequelize.ValidationError();
+            throw new ValidationError();
         });
 
         try {
@@ -96,7 +92,7 @@ describe('User Controller', () => {
                 .set('Content-Type', 'application/json')
                 .send(mockUser);
         } catch (error) {
-            expect(error).toBeInstanceOf(Sequelize.ValidationError);
+            expect(error).toBeInstanceOf(ValidationError);
             expect(error.message).toBe('Password is not defined');
         }
     });

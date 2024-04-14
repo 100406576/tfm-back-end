@@ -1,9 +1,10 @@
 const userService = require("../services/user.service.js");
 const sequelize = require('sequelize')
 const bcryptjs = require('bcryptjs');
-const NotFoundError = require('../errors/notFoundError.js')
-const ConflictError = require('../errors/conflictError.js');
-const { Sequelize, ValidationError } = require("sequelize");
+const NotFoundError = require('../errors/notFound.error.js')
+const ConflictError = require('../errors/conflict.error.js');
+const AuthorizationError = require('../errors/authorization.error.js');
+const { ValidationError } = require("sequelize");
 
 /*const readUsers = async (req, res) => {
     try {
@@ -42,10 +43,8 @@ const createUser = async (req, res, next) => {
             throw new ConflictError('Username already exists');
         }
 
-        if(dataUser.password) {
-            dataUser.password = bcryptjs.hashSync(dataUser.password);
-        } else {
-            throw new Sequelize.ValidationError('Password is not defined');
+        if(!dataUser.password) {
+            throw new ValidationError('Password is not defined');
         }
 
         await userService.createUser(dataUser);
@@ -59,7 +58,24 @@ const createUser = async (req, res, next) => {
 
 const loginUser = async (req, res, next) => {
     try {
-        //TODO
+        const { username, password } = req.query;
+
+        const user = await userService.readUser(username);
+        if (!user) {
+            throw new AuthorizationError('Incorrect username or password')
+        }
+
+        const correctPassword = await userService.isCorrectPasssword(password, user.password);
+        if (!correctPassword) {
+            throw new AuthorizationError('Incorrect username or password')
+        }
+
+        const token = userService.generateToken(user);
+
+        console.log(token);
+        res.header('Authorization', `Bearer ${token}`).status(200).json({
+            message: "Login success",
+        });
     } catch (error) {
         next(error);
     }

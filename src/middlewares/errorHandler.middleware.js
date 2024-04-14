@@ -1,11 +1,9 @@
-const { Sequelize } = require('sequelize');
-const NotFoundError = require('../errors/notFoundError.js')
-const ConflictError = require('../errors/conflictError.js')
+const { ValidationError } = require('sequelize');
 
 const errorHandler = (err, req, res, next) => {
     //console.log(err);
     let statusCode = err.status;
-    if (err instanceof Sequelize.ValidationError) {
+    if (err instanceof ValidationError) {
         statusCode = 400;
     }
     if (statusCode) {

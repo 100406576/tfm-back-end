@@ -1,9 +1,11 @@
 const { readUser, userExists, createUser } = require('../../../src/services/user.service.js');
+const bcryptjs = require('bcryptjs');
 const User = require('../../../src/models/user.model.js');
-const NotFoundError = require('../../../src/errors/notFoundError.js')
-const ConflictError = require('../../../src/errors/conflictError.js')
 
 jest.mock('../../../src/models/user.model.js');
+jest.mock('bcryptjs', () => ({
+    hashSync: jest.fn(() => 'hashedPassword'),
+}));
 
 describe('User Service', () => {
     /*test('readUsersOK', async () => {
