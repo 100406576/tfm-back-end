@@ -96,4 +96,46 @@ describe('User Controller', () => {
             expect(error.message).toBe('Password is not defined');
         }
     });
+    test('Login user OK', async () => {
+        const mockUser = { username: 'testuser1', password: 'password' };
+        userService.readUser.mockResolvedValue(mockUser);
+        userService.isCorrectPassword.mockResolvedValue(true);
+        userService.generateToken.mockReturnValue('testToken');
+
+        const res = await request(app)
+            .get('/users/login')
+            .query(mockUser);
+
+        expect(res.statusCode).toEqual(200);
+        expect(res.headers.authorization).toBe('Bearer testToken');
+        expect(res.body).toHaveProperty('message', 'Login success');
+    });
+    test('Login user KO - User not found', async () => {
+        const mockUser = { username: 'nonexistentuser', password: 'password' };
+        userService.readUser.mockResolvedValue(null);
+
+        try {
+            await request(app)
+                .get('/users/login')
+                .query(mockUser);
+        } catch (error) {
+            expect(error).toBeInstanceOf(AuthorizationError);
+            expect(error.message).toBe('Incorrect username or password');
+        }
+    });
+
+    test('Login user KO - Incorrect password', async () => {
+        const mockUser = { username: 'testuser1', password: 'wrongpassword' };
+        userService.readUser.mockResolvedValue(mockUser);
+        userService.isCorrectPassword.mockResolvedValue(false);
+
+        try {
+            await request(app)
+                .get('/users/login')
+                .query(mockUser);
+        } catch (error) {
+            expect(error).toBeInstanceOf(AuthorizationError);
+            expect(error.message).toBe('Incorrect username or password');
+        }
+    });
 });

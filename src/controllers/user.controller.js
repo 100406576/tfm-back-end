@@ -65,7 +65,7 @@ const loginUser = async (req, res, next) => {
             throw new AuthorizationError('Incorrect username or password')
         }
 
-        const correctPassword = await userService.isCorrectPasssword(password, user.password);
+        const correctPassword = await userService.isCorrectPassword(password, user.password);
         if (!correctPassword) {
             throw new AuthorizationError('Incorrect username or password')
         }

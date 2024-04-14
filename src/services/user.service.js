@@ -17,7 +17,7 @@ const createUser = async function(dataUser) {
     return await User.create(dataUser);
 }
 
-const isCorrectPasssword = async function(introducedPassword, userPassword) {
+const isCorrectPassword = async function(introducedPassword, userPassword) {
     return await bcryptjs.compare(introducedPassword, userPassword)
 }
 
@@ -39,6 +39,6 @@ module.exports = {
     //readUsers,
     readUser,
     createUser,
-    isCorrectPasssword,
+    isCorrectPassword,
     generateToken
 }
