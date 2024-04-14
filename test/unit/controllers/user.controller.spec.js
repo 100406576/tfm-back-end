@@ -35,7 +35,7 @@ describe('User Controller', () => {
             await request(app).get('/users/nonexistentuser');
         } catch (error) {
             expect(error).toBeInstanceOf(NotFoundError);
-            expect(error.message).toBe('User not found');
+            expect(error.message).toStrictEqual('User not found');
         }
     });
     test('Create user OK', async () => {
@@ -62,7 +62,7 @@ describe('User Controller', () => {
                 .send(mockUser);
         } catch (error) {
             expect(error).toBeInstanceOf(ConflictError);
-            expect(error.message).toBe('Username already exists');
+            expect(error.message).toStrictEqual('Username already exists');
         }
     });
     test('Create user KO - Bad Request no password', async () => {
@@ -76,7 +76,7 @@ describe('User Controller', () => {
                 .send(mockUser);
         } catch (error) {
             expect(error).toBeInstanceOf(ValidationError);
-            expect(error.message).toBe('Password is not defined');
+            expect(error.message).toStrictEqual('Password is not defined');
         }
     });
     test('Create user KO - Bad Request wrong email format', async () => {
@@ -93,7 +93,7 @@ describe('User Controller', () => {
                 .send(mockUser);
         } catch (error) {
             expect(error).toBeInstanceOf(ValidationError);
-            expect(error.message).toBe('Password is not defined');
+            expect(error.message).toStrictEqual('Password is not defined');
         }
     });
     test('Login user OK', async () => {
@@ -110,6 +110,17 @@ describe('User Controller', () => {
         expect(res.headers.authorization).toBe('Bearer testToken');
         expect(res.body).toHaveProperty('message', 'Login success');
     });
+    test('Login user KO - No username', async () => {
+        const mockUser = { password: 'password' };
+        try {
+            await request(app)
+                .get('/users/login')
+                .query(mockUser);
+        } catch (error) {
+            expect(error).toBeInstanceOf(ValidationError);
+            expect(error.message).toStrictEqual('No username or password');
+        }
+    });
     test('Login user KO - User not found', async () => {
         const mockUser = { username: 'nonexistentuser', password: 'password' };
         userService.readUser.mockResolvedValue(null);
@@ -120,7 +131,7 @@ describe('User Controller', () => {
                 .query(mockUser);
         } catch (error) {
             expect(error).toBeInstanceOf(AuthorizationError);
-            expect(error.message).toBe('Incorrect username or password');
+            expect(error.message).toStrictEqual('Incorrect username or password');
         }
     });
 
@@ -135,7 +146,7 @@ describe('User Controller', () => {
                 .query(mockUser);
         } catch (error) {
             expect(error).toBeInstanceOf(AuthorizationError);
-            expect(error.message).toBe('Incorrect username or password');
+            expect(error.message).toStrictEqual('Incorrect username or password');
         }
     });
 });

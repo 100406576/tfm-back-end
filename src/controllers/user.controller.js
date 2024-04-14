@@ -60,6 +60,10 @@ const loginUser = async (req, res, next) => {
     try {
         const { username, password } = req.query;
 
+        if(!username || !password) {
+            throw new ValidationError('No username or password');
+        }
+
         const user = await userService.readUser(username);
         if (!user) {
             throw new AuthorizationError('Incorrect username or password')
@@ -72,7 +76,6 @@ const loginUser = async (req, res, next) => {
 
         const token = userService.generateToken(user);
 
-        console.log(token);
         res.header('Authorization', `Bearer ${token}`).status(200).json({
             message: "Login success",
         });

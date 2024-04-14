@@ -5,7 +5,11 @@ const errorHandler = require('./middlewares/errorHandler.middleware.js');
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+    exposedHeaders: 'Authorization',
+  };
+  
+app.use(cors(corsOptions));
 
 // Middlewares
 app.use(express.json());

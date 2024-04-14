@@ -63,6 +63,15 @@ describe("Users", () => {
     expect(response.headers.authorization).toBeDefined();
     expect(response.body).toHaveProperty('message', 'Login success');
 });
+  test("Login user KO - No password", async () => {
+    const mockUser = { username: 'nonexistentuser'};
+    const response = await request(app)
+        .get(`/users/login`)
+        .query(mockUser);
+
+    expect(response.statusCode).toBe(400);
+    expect(response.body).toHaveProperty('error', 'No username or password');
+  });
 
 test("Login user KO - User not found", async () => {
     const mockUser = { username: 'nonexistentuser', password: '1234' };
