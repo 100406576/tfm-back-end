@@ -1,11 +1,21 @@
 const request = require('supertest');
 const app = require('../../../src/app.js');
 const userService = require('../../../src/services/user.service.js');
-const NotFoundError = require('../../../src/errors/notFound.error.js')
-const ConflictError = require('../../../src/errors/conflict.error.js')
+const authMiddleware = require('../../../src/middlewares/auth.middleware.js');
+const userValidationMiddleware = require('../../../src/middlewares/userValidation.middleware.js');
+const NotFoundError = require('../../../src/errors/notFound.error.js');
+const ConflictError = require('../../../src/errors/conflict.error.js');
 const { ValidationError } = require("sequelize");
 
 jest.mock('../../../src/services/user.service.js');
+const authMiddlewareMock = (req, res, next) => {
+    next();
+};
+const userValidationMiddlewareMock = (req, res, next) => {
+    next();
+};
+jest.mock('../../../src/middlewares/auth.middleware.js', () => authMiddlewareMock);
+jest.mock('../../../src/middlewares/userValidation.middleware.js', () => userValidationMiddlewareMock);
 
 describe('User Controller', () => {
     /*test('Read users', async () => {

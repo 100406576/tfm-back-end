@@ -1,6 +1,18 @@
-const request = require('supertest')
-const app = require('../../src/app.js')
-const { PORT } = require('../../src/config/config.js')
+const request = require('supertest');
+const app = require('../../src/app.js');
+const authMiddleware = require('../../src/middlewares/auth.middleware.js');
+const userValidationMiddleware = require('../../src/middlewares/userValidation.middleware.js');
+const { PORT } = require('../../src/config/config.js');
+
+
+const authMiddlewareMock = (req, res, next) => {
+    next();
+};
+const userValidationMiddlewareMock = (req, res, next) => {
+    next();
+};
+jest.mock('../../src/middlewares/auth.middleware.js', () => authMiddlewareMock);
+jest.mock('../../src/middlewares/userValidation.middleware.js', () => userValidationMiddlewareMock);
 
 describe("Users", () => {
   let server;

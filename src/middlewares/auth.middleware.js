@@ -1,11 +1,12 @@
 const jwt = require('jwt-simple');
 const moment = require('moment');
+const AuthorizationError = require('../errors/authorization.error.js');
 
 const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-        return res.status(401).json({ message: 'Authentication token not provided' });
+        throw new AuthorizationError('Authentication token not provided');
     }
 
     const token = authHeader.split(' ')[1];
@@ -15,14 +16,14 @@ const authMiddleware = (req, res, next) => {
 
         const now = moment().unix();
         if (now > payload.expiresAt) {
-            return res.status(401).json({ message: 'Authentication token has expired' });
+            throw new AuthorizationError('Authentication token has expired');
         }
 
         req.user = payload;
 
         next();
     } catch (error) {
-        return res.status(401).json({ message: 'Invalid authentication token' });
+        throw new AuthorizationError('Invalid authentication token');
     }
 };
 
