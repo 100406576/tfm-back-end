@@ -2,24 +2,46 @@ name: Node Express - Tests
 on:
   push:
     branches: ['develop', 'release-*']
+
 jobs:
-  nodejs-express:
+  nodejs-express-integration:
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test_database
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
-      - uses: actions/checkout@v4
-        with: {fetch-depth: 0}
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: '18'
+
       - name: Install dependencies
         run: npm ci
-      - name: Run unit tests
-        run: npm run-script test:unit
+
+      - name: Run tests
+        run: npm run test
         env:
           PORT: 3001
+          DB_HOST: localhost
+          DB_USERNAME: root
+          DB_PASSWORD: root
+          DB_NAME: test_database
+          DB_PORT: 3306
+          DB_DIALECT: mysql
       - name: SonarCloud Scan
         if: success()
-        uses: SonarSource/sonarcloud-github-action@master # file: sonar-project.properties
+        uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
           SONAR_TOKEN: ${{ secrets.TOKEN_SONAR }}
