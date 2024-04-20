@@ -17,7 +17,7 @@ const userValidationMiddlewareMock = (req, res, next) => {
 jest.mock('../../../src/middlewares/auth.middleware.js', () => authMiddlewareMock);
 jest.mock('../../../src/middlewares/userValidation.middleware.js', () => userValidationMiddlewareMock);
 
-describe('User Controller', () => {pect(res.body).toHaveProperty('users', mockUsers);
+describe('User Controller', () => {
     test('Read user OK', async () => {
         const mockUser = { username: 'testuser1', email: 'testuser1@example.com' };
         userService.readUser.mockResolvedValue(mockUser);
