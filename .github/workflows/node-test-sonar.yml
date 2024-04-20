@@ -5,7 +5,7 @@ on:
 
 jobs:
   nodejs-express-integration:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     env:
       PORT: 3002
@@ -19,6 +19,7 @@ jobs:
         run: |
           sudo /etc/init.d/mysql start
           mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USERNAME }} -p${{ env.DB_PASSWORD }}
+          mysql -e 'SHOW DATABASES;' -u${{ env.DB_USERNAME }} -p${{ env.DB_PASSWORD }}
       - name: Checkout code
         uses: actions/checkout@v4
 
