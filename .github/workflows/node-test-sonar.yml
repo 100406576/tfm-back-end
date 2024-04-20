@@ -34,7 +34,7 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npm run-script test
+        run: npm run-script test -- --coverage --testResultsProcessor=jest-sonar-reporter
           
       - name: SonarCloud Scan
         if: success()

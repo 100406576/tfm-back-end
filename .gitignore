@@ -32,3 +32,5 @@
 # Otros archivos generados
 .DS_Store
 Thumbs.db
+
+test-report.xml
