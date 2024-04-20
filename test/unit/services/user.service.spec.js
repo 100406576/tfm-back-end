@@ -12,17 +12,6 @@ jest.mock('jwt-simple', () => ({
 }));
 
 describe('User Service', () => {
-    /*test('readUsersOK', async () => {
-        const mockUsers = [
-            { username: 'testuser1', email: 'testuser1@example.com' },
-            { username: 'testuser2', email: 'testuser2@example.com' }
-        ];
-        User.findAll.mockResolvedValue(mockUsers);
-
-        const users = await readUsers();
-
-        expect(users).toEqual(mockUsers);
-    });*/
     test('readUser OK', async () => {
         const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', password: "1234", email: 'testuser1@example.com' };
         User.findOne.mockResolvedValue(mockUser);

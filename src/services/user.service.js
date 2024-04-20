@@ -3,10 +3,6 @@ const bcryptjs = require('bcryptjs');
 const jwt = require('jwt-simple');
 const moment = require("moment");
 
-/*const readUsers = async function() {
-    return User.findAll();
-}*/
-
 const readUser = async function(username) {
     return await User.findOne({ where: { username: username } });
 };
@@ -36,7 +32,6 @@ const generateToken = function(user) {
 };
 
 module.exports = {
-    //readUsers,
     readUser,
     createUser,
     isCorrectPassword,

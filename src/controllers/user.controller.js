@@ -6,19 +6,6 @@ const ConflictError = require('../errors/conflict.error.js');
 const AuthorizationError = require('../errors/authorization.error.js');
 const { ValidationError } = require("sequelize");
 
-/*const readUsers = async (req, res) => {
-    try {
-        const response = await userService.readUsers();
-        res.json({'users': response});
-    } catch (error) {
-        console.error(error);
-        res.status(500).send({
-            msg: 'Internal server error',
-            error: error.message,
-        });
-    }
-};*/
-
 const readUser = async (req, res, next) => {
     try {
         const username = req.params.username;

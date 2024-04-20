@@ -1,1 +1,3 @@
 # tfm-back-end
+
+[![Node Express - Tests](https://github.com/100406576/tfm-back-end/actions/workflows/node-test-sonar.yml/badge.svg)](https://github.com/100406576/tfm-back-end/actions/workflows/node-test-sonar.yml) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=100406576%3Atfm-back-end&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=100406576%3Atfm-back-end)

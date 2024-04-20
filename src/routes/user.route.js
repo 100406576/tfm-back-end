@@ -5,7 +5,6 @@ const userValidationMiddleware = require('../middlewares/userValidation.middlewa
 
 const router = express.Router();
 
-//router.get('/users', userController.readUsers);
 router.get('/users/login', userController.loginUser);
 router.get('/users/:username', authMiddleware, userValidationMiddleware, userController.readUser);
 router.post('/users', userController.createUser);
