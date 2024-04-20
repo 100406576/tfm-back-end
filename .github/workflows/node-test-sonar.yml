@@ -30,7 +30,7 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npm run test
+        run: npm run-script test
         env:
           PORT: 3001
           DB_HOST: localhost
