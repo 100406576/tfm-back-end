@@ -4,6 +4,7 @@ const jwt = require('jwt-simple');
 const moment = require("moment");
 
 const readUser = async function(username) {
+    await User.sync();
     return await User.findOne({ where: { username: username } });
 };
 

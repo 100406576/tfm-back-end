@@ -1,6 +1,7 @@
 const { config } = require('dotenv');
 
 if (process.env.NODE_ENV === 'test') {
+    console.log('Loading test environment variables')
     config({ path: '.env.test' });
 } else {
     config();
