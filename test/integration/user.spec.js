@@ -64,9 +64,10 @@ describe("Users", () => {
   });
 
   test("Login user OK", async () => {
+    const mockUserLogin = { username: mockUser.username, password: mockUser.password };
     const res = await request(app)
       .get(`/users/login`)
-      .query(mockUser);
+      .query(mockUserLogin);
 
     expect(res.statusCode).toBe(200);
     expect(res.headers.authorization).toBeDefined();

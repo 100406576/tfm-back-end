@@ -8,7 +8,7 @@
     "start": "node src/index.js",
     "test": "cross-env NODE_ENV=test && jest  --detectOpenHandles",
     "test:coverage": "cross-env NODE_ENV=test && jest  --detectOpenHandles --testPathPattern=./test --coverage",
-    "test:unit": "cross-env NODE_ENV=test && jest  --detectOpenHandles --testPathPattern=./test/unit/",
+    "test:unit": "cross-env NODE_ENV=test && jest  --detectOpenHandles --testPathPattern=./test/unit/middlewares/",
     "test:integration": "cross-env NODE_ENV=test && jest  --detectOpenHandles --testPathPattern=./test/integration/"
   },
   "keywords": [],
