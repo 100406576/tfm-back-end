@@ -15,6 +15,7 @@ const createUser = async function(dataUser) {
 }
 
 const isCorrectPassword = async function(introducedPassword, userPassword) {
+    await User.sync();
     return await bcryptjs.compare(introducedPassword, userPassword)
 }
 
