@@ -6,18 +6,17 @@ const { PORT } = require('../../src/config/config.js');
 
 
 const authMiddlewareMock = (req, res, next) => {
-    next();
+  next();
 };
 const userValidationMiddlewareMock = (req, res, next) => {
-    next();
+  next();
 };
 jest.mock('../../src/middlewares/auth.middleware.js', () => authMiddlewareMock);
 jest.mock('../../src/middlewares/userValidation.middleware.js', () => userValidationMiddlewareMock);
 
 describe("Users", () => {
   let server;
-  // Cuando se implemente el borrar se borrara en vez de hacer esto
-  const randomUsername = 'user' + Math.floor(Math.random() * 10000);
+  const mockUser = { username: 'testIntegration', name: 'paco', lastName: 'perez', password: "1234", email: 'testuser2@example.com' };
 
   beforeAll(() => {
     server = app.listen(PORT, () => {
@@ -28,73 +27,90 @@ describe("Users", () => {
   afterAll(done => {
     server.close(done);
   });
+
   test("Read user KO - User not found", async () => {
-    const response = await request(app).get(`/users/${randomUsername}`).send();
-    expect(response.statusCode).toBe(404);
+    const res = await request(app).get(`/users/${mockUser.username}`).send();
+    expect(res.statusCode).toBe(404);
   });
+
   test("Create user OK", async () => {
-    const mockUser = { username: randomUsername, name: 'paco', lastName: 'perez', password: "1234", email: 'testuser2@example.com' };
-    const response = await request(app).post("/users").send(mockUser);
-    expect(response.statusCode).toBe(201);
-    expect(response.body).toHaveProperty('message', 'User created');
+    const res = await request(app).post("/users").send(mockUser);
+    expect(res.statusCode).toBe(201);
+    expect(res.body).toHaveProperty('message', 'User created');
   });
+
   test("Create user KO - Username already exists", async () => {
-    const mockUser = { username: randomUsername, name: 'paco', lastName: 'perez', password: "1234", email: 'existinguser@example.com' };
-    const response = await request(app).post("/users").send(mockUser);
-    expect(response.statusCode).toBe(409);
-    expect(response.body).toHaveProperty('error', 'Username already exists');
+    const res = await request(app).post("/users").send(mockUser);
+    expect(res.statusCode).toBe(409);
+    expect(res.body).toHaveProperty('error', 'Username already exists');
   });
+
   test("Read user OK", async () => {
-    const response = await request(app).get(`/users/${randomUsername}`).send();
-    expect(response.statusCode).toBe(200);
-    expect(response.body.username).toStrictEqual(randomUsername);
+    const res = await request(app).get(`/users/${mockUser.username}`).send();
+    expect(res.statusCode).toBe(200);
+    expect(res.body.username).toStrictEqual(mockUser.username);
   });
+
   test("Create user KO - Bad request", async () => {
-    const mockUser = { username: 'testUser', password: 'paco' };
-    const response = await request(app).post("/users").send(mockUser);
-    expect(response.statusCode).toBe(400);
+    const mockWrongUser = { username: 'testUser', password: 'paco' };
+    const res = await request(app).post("/users").send(mockWrongUser);
+    expect(res.statusCode).toBe(400);
   });
+
   test("Create user KO - Bad request no password", async () => {
-    const mockUser = { username: 'testUser' };
-    const response = await request(app).post("/users").send(mockUser);
-    expect(response.statusCode).toBe(400);
+    const mockUserNoPass = { username: 'testUser' };
+    const res = await request(app).post("/users").send(mockUserNoPass);
+    expect(res.statusCode).toBe(400);
   });
+
   test("Login user OK", async () => {
-    const mockUser = { username: randomUsername, password: '1234' };
-    const response = await request(app)
-        .get(`/users/login`)
-        .query(mockUser);
+    const res = await request(app)
+      .get(`/users/login`)
+      .query(mockUser);
 
-    expect(response.statusCode).toBe(200);
-    expect(response.headers.authorization).toBeDefined();
-    expect(response.body).toHaveProperty('message', 'Login success');
-});
-  test("Login user KO - No password", async () => {
-    const mockUser = { username: 'nonexistentuser'};
-    const response = await request(app)
-        .get(`/users/login`)
-        .query(mockUser);
-
-    expect(response.statusCode).toBe(400);
-    expect(response.body).toHaveProperty('error', 'No username or password');
+    expect(res.statusCode).toBe(200);
+    expect(res.headers.authorization).toBeDefined();
+    expect(res.body).toHaveProperty('message', 'Login success');
   });
 
-test("Login user KO - User not found", async () => {
-    const mockUser = { username: 'nonexistentuser', password: '1234' };
-    const response = await request(app)
-        .get(`/users/login`)
-        .query(mockUser);
+  test("Login user KO - No password", async () => {
+    const mockUserNoPass = { username: 'nonexistentuser' };
+    const res = await request(app)
+      .get(`/users/login`)
+      .query(mockUserNoPass);
 
-    expect(response.statusCode).toBe(401);
-    expect(response.body).toHaveProperty('error', 'Incorrect username or password');
-});
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toHaveProperty('error', 'No username or password');
+  });
 
-test("Login user KO - Incorrect password", async () => {
-    const mockUser = { username: randomUsername, password: 'wrongpassword' };
-    const response = await request(app)
-        .get(`/users/login`)
-        .query(mockUser);
-    expect(response.statusCode).toBe(401);
-    expect(response.body).toHaveProperty('error', 'Incorrect username or password');
-});
+  test("Login user KO - User not found", async () => {
+    const mockUserNoExist = { username: 'nonexistentuser', password: '1234' };
+    const res = await request(app)
+      .get(`/users/login`)
+      .query(mockUserNoExist);
+
+    expect(res.statusCode).toBe(401);
+    expect(res.body).toHaveProperty('error', 'Incorrect username or password');
+  });
+
+  test("Login user KO - Incorrect password", async () => {
+    const mockUserWrongPass = { username: mockUser.username, password: 'wrongpassword' };
+    const res = await request(app)
+      .get(`/users/login`)
+      .query(mockUserWrongPass);
+    expect(res.statusCode).toBe(401);
+    expect(res.body).toHaveProperty('error', 'Incorrect username or password');
+  });
+
+  test("Delete user OK", async () => {
+    const res = await request(app).delete(`/users/${mockUser.username}`).send();
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('message', 'User deleted');
+  });
+
+  test("Delete user KO - User not found", async () => {
+    const res = await request(app).delete(`/users/${mockUser.username}`).send();
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('error', 'User not found');
+  });
 });

@@ -33,9 +33,15 @@ const generateToken = function(user) {
     return token;
 };
 
+const deleteUser = async function(username) {
+    await User.sync();
+    return await User.destroy({ where: { username: username } });
+}
+
 module.exports = {
     readUser,
     createUser,
     isCorrectPassword,
-    generateToken
+    generateToken,
+    deleteUser
 }

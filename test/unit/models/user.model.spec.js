@@ -29,14 +29,20 @@ UserMock.$queryInterface.$useHandler(function(query, queryOptions, done) {
 });
 
 describe('User Model', () => {
+
     test('Find User by username', async () => {
         const foundUser = await UserMock.findOne({ where: { username: 'testuser1' } });
         expect(foundUser.username).toBe('testuser1');
     });
-    
+
     test('Create user', async () => {
         const mockUser = { username: 'testuser2', name: 'john', lastName: 'doe', password: 'password', email: 'testuser2@example.com' };
         const createdUser = await UserMock.create(mockUser);
         expect(createdUser.username).toBe('testuser2');
+    });
+    
+    test('Delete user', async () => {
+        const deletedUser = await UserMock.destroy({ where: { username: 'testuser1' } });
+        expect(deletedUser).toBe(1);
     });
 });

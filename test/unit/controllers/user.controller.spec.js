@@ -18,6 +18,7 @@ jest.mock('../../../src/middlewares/auth.middleware.js', () => authMiddlewareMoc
 jest.mock('../../../src/middlewares/userValidation.middleware.js', () => userValidationMiddlewareMock);
 
 describe('User Controller', () => {
+
     test('Read user OK', async () => {
         const mockUser = { username: 'testuser1', email: 'testuser1@example.com' };
         userService.readUser.mockResolvedValue(mockUser);
@@ -27,6 +28,7 @@ describe('User Controller', () => {
         expect(res.statusCode).toEqual(200);
         expect(res.body).toEqual(mockUser);
     });
+
     test('Read user KO - User not found', async () => {
         userService.readUser.mockResolvedValue(null);
         try {
@@ -36,6 +38,7 @@ describe('User Controller', () => {
             expect(error.message).toStrictEqual('User not found');
         }
     });
+
     test('Create user OK', async () => {
         const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', password: "password", email: 'testuser1@example.com' };
         userService.readUser.mockResolvedValue(null);
@@ -49,6 +52,7 @@ describe('User Controller', () => {
         expect(res.statusCode).toEqual(201);
         expect(res.body).toHaveProperty('message', 'User created');
     });
+
     test('Create user KO - Username already exists', async () => {
         const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', password: "password", email: 'testuser1@example.com' };
         userService.readUser.mockResolvedValue(mockUser);
@@ -63,6 +67,7 @@ describe('User Controller', () => {
             expect(error.message).toStrictEqual('Username already exists');
         }
     });
+
     test('Create user KO - Bad Request no password', async () => {
         const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', email: 'testuser1@example.com' };
         userService.readUser.mockResolvedValue(mockUser);
@@ -77,6 +82,7 @@ describe('User Controller', () => {
             expect(error.message).toStrictEqual('Password is not defined');
         }
     });
+
     test('Create user KO - Bad Request wrong email format', async () => {
         const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', password: "password", email: 'testuser1' };
         userService.readUser.mockResolvedValue(null);
@@ -94,6 +100,7 @@ describe('User Controller', () => {
             expect(error.message).toStrictEqual('Password is not defined');
         }
     });
+
     test('Login user OK', async () => {
         const mockUser = { username: 'testuser1', password: 'password' };
         userService.readUser.mockResolvedValue(mockUser);
@@ -108,6 +115,7 @@ describe('User Controller', () => {
         expect(res.headers.authorization).toBe('Bearer testToken');
         expect(res.body).toHaveProperty('message', 'Login success');
     });
+
     test('Login user KO - No username', async () => {
         const mockUser = { password: 'password' };
         try {
@@ -119,6 +127,7 @@ describe('User Controller', () => {
             expect(error.message).toStrictEqual('No username or password');
         }
     });
+
     test('Login user KO - User not found', async () => {
         const mockUser = { username: 'nonexistentuser', password: 'password' };
         userService.readUser.mockResolvedValue(null);
@@ -145,6 +154,26 @@ describe('User Controller', () => {
         } catch (error) {
             expect(error).toBeInstanceOf(AuthorizationError);
             expect(error.message).toStrictEqual('Incorrect username or password');
+        }
+    });
+
+    test('Delete user OK', async () => {
+        userService.deleteUser.mockResolvedValue(1);
+
+        const res = await request(app).delete('/users/testuser1');
+
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toHaveProperty('message', 'User deleted');
+    });
+
+    test('Delete user KO - User not found', async () => {
+        userService.deleteUser.mockResolvedValue(0);
+
+        try {
+            await request(app).delete('/users/nonexistentuser');
+        } catch (error) {
+            expect(error).toBeInstanceOf(NotFoundError);
+            expect(error.message).toStrictEqual('User not found');
         }
     });
 });

@@ -1,4 +1,4 @@
-const { readUser, createUser, isCorrectPassword, generateToken } = require('../../../src/services/user.service.js');
+const { readUser, createUser, isCorrectPassword, generateToken, deleteUser } = require('../../../src/services/user.service.js');
 const bcryptjs = require('bcryptjs');
 const User = require('../../../src/models/user.model.js');
 
@@ -12,6 +12,7 @@ jest.mock('jwt-simple', () => ({
 }));
 
 describe('User Service', () => {
+    
     test('readUser OK', async () => {
         const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', password: "1234", email: 'testuser1@example.com' };
         User.findOne.mockResolvedValue(mockUser);
@@ -20,6 +21,7 @@ describe('User Service', () => {
 
         expect(user).toEqual(mockUser);
     });
+
     test('readUser OK - But user not found', async () => {
         User.findOne.mockResolvedValue(null);
         
@@ -27,6 +29,7 @@ describe('User Service', () => {
 
         expect(user).toBe(null);
     });
+
     test('createUser OK', async () => {
         const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', password: "1234", email: 'testuser1@example.com' };
         User.create.mockResolvedValue(mockUser);
@@ -34,6 +37,7 @@ describe('User Service', () => {
         const user = await createUser(mockUser);
         expect(user).toEqual(mockUser);
     });
+
     test('isCorrectPassword OK', async () => {
         const mockPassword = '1234';
         const mockHash = 'hashedPassword';
@@ -49,5 +53,21 @@ describe('User Service', () => {
         const token = generateToken(mockUser);
 
         expect(token).toBe('testToken');
+    });
+
+    test('deleteUser OK', async () => {
+        User.destroy.mockResolvedValue(1);
+
+        const result = await deleteUser('testuser1');
+
+        expect(result).toBe(1);
+    });
+
+    test('deleteUser KO - User not found', async () => {
+        User.destroy.mockResolvedValue(0);
+
+        const result = await deleteUser('testuser1');
+
+        expect(result).toBe(0);
     });
 });

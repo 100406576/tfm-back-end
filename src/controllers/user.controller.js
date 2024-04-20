@@ -71,9 +71,26 @@ const loginUser = async (req, res, next) => {
     }
 };
 
+const deleteUser = async (req, res, next) => {
+    try {
+        const username = req.params.username;
+        
+        const nUserDeleted = await userService.deleteUser(username);
+        if (nUserDeleted === 0) {
+            throw new NotFoundError('User not found');
+        }
+        
+        res.status(200).json({
+            message: "User deleted",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
-    //readUsers,
     readUser,
     createUser,
-    loginUser
+    loginUser,
+    deleteUser
 }
