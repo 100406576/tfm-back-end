@@ -32,7 +32,9 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npm run-script test
+        run: |
+          sudo /etc/init.d/mysql status
+          npm run-script test
           
       - name: SonarCloud Scan
         if: success()
