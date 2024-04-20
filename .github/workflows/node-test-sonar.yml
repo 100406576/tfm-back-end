@@ -7,22 +7,18 @@ jobs:
   nodejs-express-integration:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:latest
-        env:
-          MYSQL_ROOT_USER: root
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: test_database
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    env:
+      PORT: 3002
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      DB_DATABASE: test_database
+      DB_PORT: 3306
           
     steps:
       - name: Set up MySQL
         run: |
           sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE ${{ env.MYSQL_DATABASE }};' -u${{ env.MYSQL_ROOT_USER }} -p${{ env.MYSQL_ROOT_PASSWORD }}
+          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USERNAME }} -p${{ env.DB_PASSWORD }}
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -36,14 +32,7 @@ jobs:
 
       - name: Run tests
         run: npm run-script test
-        env:
-          PORT: 3001
-          DB_HOST: localhost
-          DB_USERNAME: root
-          DB_PASSWORD: root
-          DB_DATABASE: test_database
-          DB_PORT: 3306
-          DB_DIALECT: mysql
+          
       - name: SonarCloud Scan
         if: success()
         uses: SonarSource/sonarcloud-github-action@master
