@@ -36,7 +36,7 @@ jobs:
           DB_HOST: localhost
           DB_USERNAME: root
           DB_PASSWORD: root
-          DB_NAME: test_database
+          DB_DATABASE: test_database
           DB_PORT: 3306
           DB_DIALECT: mysql
       - name: SonarCloud Scan
