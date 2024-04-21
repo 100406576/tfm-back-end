@@ -19,7 +19,7 @@ describe("Users integration test", () => {
   const mockUser = { username: 'testIntegration', name: 'paco', lastName: 'perez', password: "1234", email: 'testuser2@example.com' };
 
   beforeAll(async () => {
-    syncDatabase().then(() => {
+    await syncDatabase().then(() => {
       server = app.listen(PORT, () => {
         console.log(`Server listening at http://localhost:${PORT}`)
       });
