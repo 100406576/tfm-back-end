@@ -1,4 +1,4 @@
-const { readUser, createUser, isCorrectPassword, generateToken, deleteUser } = require('../../../src/services/user.service.js');
+const { readUser, createUser, isCorrectPassword, generateToken, updateUser, deleteUser } = require('../../../src/services/user.service.js');
 const bcryptjs = require('bcryptjs');
 const User = require('../../../src/models/user.model.js');
 
@@ -53,6 +53,15 @@ describe('User Service', () => {
         const token = generateToken(mockUser);
 
         expect(token).toBe('testToken');
+    });
+
+    test('updateUser OK', async () => {
+        const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', password: "1234", email: 'testchanged@example.com' };
+        User.update.mockResolvedValue([1]);
+
+        const result = await updateUser('testuser1', mockUser);
+
+        expect(result[0]).toBe(1);
     });
 
     test('deleteUser OK', async () => {

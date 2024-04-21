@@ -4,18 +4,15 @@ const jwt = require('jwt-simple');
 const moment = require("moment");
 
 const readUser = async function(username) {
-    await User.sync();
     return await User.findOne({ where: { username: username } });
 };
 
 const createUser = async function(dataUser) {
     dataUser.password = bcryptjs.hashSync(dataUser.password);
-    await User.sync();
     return await User.create(dataUser);
 }
 
 const isCorrectPassword = async function(introducedPassword, userPassword) {
-    await User.sync();
     return await bcryptjs.compare(introducedPassword, userPassword)
 }
 
@@ -33,8 +30,15 @@ const generateToken = function(user) {
     return token;
 };
 
+const updateUser = async function(username, dataUser) {
+    delete dataUser.username; // Username no se puede editar
+    if(dataUser.password) {
+        dataUser.password = bcryptjs.hashSync(dataUser.password);
+    }
+    return await User.update(dataUser, { where: { username: username } });
+}
+
 const deleteUser = async function(username) {
-    await User.sync();
     return await User.destroy({ where: { username: username } });
 }
 
@@ -43,5 +47,6 @@ module.exports = {
     createUser,
     isCorrectPassword,
     generateToken,
+    updateUser,
     deleteUser
 }

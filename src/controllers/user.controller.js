@@ -71,6 +71,25 @@ const loginUser = async (req, res, next) => {
     }
 };
 
+const updateUser = async (req, res, next) => {
+    try {
+        const username = req.params.username;
+        const dataUser = req.body;
+
+        const user = await userService.readUser(username);
+        if (!user) {
+            throw new NotFoundError('User not found');
+        }
+
+        await userService.updateUser(username, dataUser);
+        res.status(200).json({
+            message: "User updated",
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 const deleteUser = async (req, res, next) => {
     try {
         const username = req.params.username;
@@ -92,5 +111,6 @@ module.exports = {
     readUser,
     createUser,
     loginUser,
+    updateUser,
     deleteUser
 }

@@ -157,6 +157,37 @@ describe('User Controller', () => {
         }
     });
 
+    test('Update user OK', async () => {
+        const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', password: "password", email: 'testuser1@example.com' };
+        const mockUserEdited = { username: 'testuser1', name: 'paco', lastName: 'garcia', password: "password", email: 'testuser1@example.com' };
+
+        userService.readUser.mockResolvedValue(mockUser);
+        userService.updateUser.mockResolvedValue([1]);
+
+        const res = await request(app)
+            .put('/users/testuser1')
+            .set('Content-Type', 'application/json')
+            .send(mockUserEdited);
+
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toHaveProperty('message', 'User updated');
+    });
+
+    test('Update user KO - User not found', async () => {
+        const mockUser = { username: 'notFound', name: 'paco', lastName: 'perez', password: "password", email: 'testuser1@example.com' };
+        userService.readUser.mockResolvedValue(null);
+
+        try {
+            await request(app)
+                .put('/users/notFound')
+                .set('Content-Type', 'application/json')
+                .send(mockUser);
+        } catch (error) {
+            expect(error).toBeInstanceOf(NotFoundError);
+            expect(error.message).toStrictEqual('User not found');
+        }
+    });
+
     test('Delete user OK', async () => {
         userService.deleteUser.mockResolvedValue(1);
 

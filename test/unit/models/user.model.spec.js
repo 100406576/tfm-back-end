@@ -26,6 +26,10 @@ UserMock.$queryInterface.$useHandler(function(query, queryOptions, done) {
     if (query === 'create') {
         return UserMock.build(queryOptions);
     }
+
+    if (query === 'update') {
+        return [1];
+    }
 });
 
 describe('User Model', () => {
@@ -39,6 +43,13 @@ describe('User Model', () => {
         const mockUser = { username: 'testuser2', name: 'john', lastName: 'doe', password: 'password', email: 'testuser2@example.com' };
         const createdUser = await UserMock.create(mockUser);
         expect(createdUser.username).toBe('testuser2');
+    });   
+
+    test('Update user', async () => {
+        const dataUser = { name: 'updatedName' };
+        const username = 'testuser1';
+        const affectedRows = await UserMock.update(dataUser, { where: { username: username } });
+        expect(affectedRows[0]).toBe(1);
     });
     
     test('Delete user', async () => {

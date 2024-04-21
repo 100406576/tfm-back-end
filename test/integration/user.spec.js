@@ -14,7 +14,7 @@ const userValidationMiddlewareMock = (req, res, next) => {
 jest.mock('../../src/middlewares/auth.middleware.js', () => authMiddlewareMock);
 jest.mock('../../src/middlewares/userValidation.middleware.js', () => userValidationMiddlewareMock);
 
-describe("Users", () => {
+describe("Users integration test", () => {
   let server;
   const mockUser = { username: 'testIntegration', name: 'paco', lastName: 'perez', password: "1234", email: 'testuser2@example.com' };
 
@@ -101,6 +101,22 @@ describe("Users", () => {
       .query(mockUserWrongPass);
     expect(res.statusCode).toBe(401);
     expect(res.body).toHaveProperty('error', 'Incorrect username or password');
+  });
+
+  test("Update user OK", async () => {
+    const mockUpdateUser = { username: 'testIntegration', name: 'paco', lastName: 'perez', password: "1234", email: 'testChanged@example.com' };
+    const res = await request(app).put(`/users/${mockUser.username}`).send(mockUpdateUser);
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('message', 'User updated');
+  });
+
+  test("Update user KO - User not found", async () => {
+    try {
+      await request(app).put(`/users/nonExist`).send(mockUser);
+    } catch (error) {
+      expect(res.statusCode).toBe(404);
+      expect(res.body).toHaveProperty('error', 'User not found');
+    }
   });
 
   test("Delete user OK", async () => {

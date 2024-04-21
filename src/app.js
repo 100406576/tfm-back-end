@@ -6,13 +6,14 @@ const errorHandler = require('./middlewares/errorHandler.middleware.js');
 
 const app = express();
 
-sequelize.sync()
-  .then(() => {
+(async () => {
+  try {
+    await sequelize.sync();
     console.log("Database synchronized successfully.");
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error("Error synchronizing database:", error);
-  });
+  }
+})();
 
 const corsOptions = {
     exposedHeaders: 'Authorization',
