@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../../src/app.js');
+const { app, syncDatabase } = require('../../src/app.js');
 const authMiddleware = require('../../src/middlewares/auth.middleware.js');
 const userValidationMiddleware = require('../../src/middlewares/userValidation.middleware.js');
 const { PORT } = require('../../src/config/config.js');
@@ -18,10 +18,12 @@ describe("Users integration test", () => {
   let server;
   const mockUser = { username: 'testIntegration', name: 'paco', lastName: 'perez', password: "1234", email: 'testuser2@example.com' };
 
-  beforeAll(() => {
-    server = app.listen(PORT, () => {
-      console.log(`Server listening at http://localhost:${PORT}`)
-    });
+  beforeAll(async () => {
+    syncDatabase().then(() => {
+      server = app.listen(PORT, () => {
+        console.log(`Server listening at http://localhost:${PORT}`)
+      });
+  });
   });
 
   afterAll(done => {

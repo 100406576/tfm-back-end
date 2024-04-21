@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../../../src/app.js');
+const { app } = require('../../../src/app.js');
 const userService = require('../../../src/services/user.service.js');
 const authMiddleware = require('../../../src/middlewares/auth.middleware.js');
 const userValidationMiddleware = require('../../../src/middlewares/userValidation.middleware.js');

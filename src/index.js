@@ -1,6 +1,8 @@
-const app = require('./app.js');
+const { app, syncDatabase } = require('./app.js');
 const { PORT } = require('./config/config.js');
 
-app.listen(PORT, () => {
-    console.log(`Server listening at http://localhost:${PORT}`)
-})
+syncDatabase().then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server listening at http://localhost:${PORT}`)
+    });
+});
