@@ -37,6 +37,9 @@ User.init(
         phoneNumber: {
             type: DataTypes.STRING,
             allowNull: true,
+            set(value) {
+                this.setDataValue('phoneNumber', value === "" ? null : value);
+            },
             validate: {
                 is: {
                     args: /^[0-9]{9}$/,
@@ -47,6 +50,9 @@ User.init(
         dni: {
             type: DataTypes.STRING,
             allowNull: true,
+            set(value) {
+                this.setDataValue('dni', value === "" ? null : value);
+            },
             validate: {
                 is: {
                     args: /^[0-9]{8}[A-Z]$/i,
@@ -58,6 +64,9 @@ User.init(
         gender: {
             type: DataTypes.STRING,
             allowNull: true,
+            set(value) {
+                this.setDataValue('gender', value === "" ? null : value);
+            },
             validate: {
                 isIn: {
                     args: [['male', 'female']],

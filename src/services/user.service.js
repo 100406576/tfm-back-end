@@ -32,9 +32,7 @@ const generateToken = function(user) {
 
 const updateUser = async function(username, dataUser) {
     delete dataUser.username; // Username no se puede editar
-    if(dataUser.password) {
-        dataUser.password = bcryptjs.hashSync(dataUser.password);
-    }
+    delete dataUser.password; // Password no se puede editar
     return await User.update(dataUser, { where: { username: username } });
 }
 
