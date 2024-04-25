@@ -19,7 +19,7 @@ const isCorrectPassword = async function(introducedPassword, userPassword) {
 
 const generateToken = function(user) {
     const payload = {
-        id: user.user_id,
+        user_id: user.user_id,
         username: user.username,
         createdAt: moment().unix(),
         expiresAt: moment().add(1, 'hour').unix()

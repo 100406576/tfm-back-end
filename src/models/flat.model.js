@@ -1,8 +1,7 @@
-const { DataTypes } = require("sequelize");
+const { Model, DataTypes } = require("sequelize");
 const sequelize = require("./index.js");
-const Property = require("./property.model");
 
-class Flat extends Property {}
+class Flat extends Model {}
 
 Flat.init(
     {
@@ -24,7 +23,5 @@ Flat.init(
         modelName: "Flat",
     }
 );
-
-Flat.belongsTo(Property, { foreignKey: 'property_id', onDelete: 'CASCADE' });
 
 module.exports = Flat;
