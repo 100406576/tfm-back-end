@@ -11,10 +11,10 @@ const cleanPropertyDetails = (property) => {
     return propertyObject;
 };
 
-const readPropertiesByUserId = async function(userId) {
+const readPropertiesByUserId = async function(user_id) {
     try {
       const properties = await Property.findAll({
-        where: { user_id: userId },
+        where: { user_id: user_id },
         include: [
           { model: House, as: 'houseDetails' },
           { model: Flat, as: 'flatDetails' },
@@ -31,8 +31,8 @@ const readPropertiesByUserId = async function(userId) {
     }
 };
 
-const readProperty = async function(propertyId) {
-    const property = await Property.findByPk(propertyId, {
+const readProperty = async function(property_id) {
+    const property = await Property.findByPk(property_id, {
         include: [
             { model: House, as: 'houseDetails' },
             { model: Flat, as: 'flatDetails' },

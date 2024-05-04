@@ -13,11 +13,15 @@ Property.init(
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        property_name: {
+        propertyName: {
             type: DataTypes.STRING,
             allowNull: false
         },
         address: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        cadastralReference: {
             type: DataTypes.STRING,
             allowNull: false,
         },

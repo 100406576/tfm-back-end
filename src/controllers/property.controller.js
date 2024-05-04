@@ -23,8 +23,8 @@ const readPropertiesOfUser = async (req, res, next) => {
 
 const readProperty = async (req, res, next) => {
     try {
-        const propertyId = req.params.propertyId;
-        const property = await propertyService.readProperty(propertyId);
+        const property_id = req.params.property_id;
+        const property = await propertyService.readProperty(property_id);
 
         if (!property) {
             throw new NotFoundError('Property not found');
