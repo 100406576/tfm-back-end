@@ -79,10 +79,10 @@ describe('Property Model', () => {
         const property_id = '1';
         const affectedRows = await PropertyMock.update(dataProperty, { where: { property_id: property_id } });
         expect(affectedRows[0]).toBe(1);
-    });
+    });*/
     
     test('Delete property', async () => {
         const deletedProperty = await PropertyMock.destroy({ where: { property_id: '1' } });
         expect(deletedProperty).toBe(1);
-    });*/
+    });
 });

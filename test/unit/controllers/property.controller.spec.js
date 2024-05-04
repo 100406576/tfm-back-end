@@ -77,4 +77,25 @@ describe('Property Controller', () => {
             expect(error.message).toStrictEqual('You are not allowed to see this property');
         }
     });
+
+    test('Delete property OK', async () => {
+        propertyService.readProperty.mockResolvedValue({ property_id: 1, user_id: 1 });
+        propertyService.deleteProperty.mockResolvedValue(1);
+
+        const res = await request(app).delete('/properties/1');
+
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toEqual({ message: 'Property deleted' });
+    });
+
+    test('Delete property KO - Property not found', async () => {
+        propertyService.readProperty.mockResolvedValue(null);
+
+        try {
+            await request(app).delete('/properties/999');
+        } catch (error) {
+            expect(error).toBeInstanceOf(NotFoundError);
+            expect(error.message).toStrictEqual('Property not found');
+        }
+    });
 });

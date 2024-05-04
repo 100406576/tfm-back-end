@@ -40,7 +40,29 @@ const readProperty = async (req, res, next) => {
     }
 };
 
+const deleteProperty = async (req, res, next) => {
+    try {
+        const property_id = req.params.property_id;
+        const property = await propertyService.readProperty(property_id);
+
+        if (!property) {
+            throw new NotFoundError('Property not found');
+        }
+
+        if(property.user_id !== req.user.user_id) {
+            throw new ForbiddenError('You are not allowed to delete this property');
+        }
+
+        await propertyService.deleteProperty(property_id);
+
+        res.status(200).send({ message: 'Property deleted'});
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     readPropertiesOfUser,
-    readProperty
+    readProperty,
+    deleteProperty
 }

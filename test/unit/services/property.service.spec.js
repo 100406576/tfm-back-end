@@ -9,6 +9,7 @@ jest.mock('../../../src/models/property.model', () => {
         findAll: jest.fn(),
         hasOne: jest.fn(),
         findByPk: jest.fn(),
+        destroy: jest.fn(),
     };
 });
 jest.mock('../../../src/models/house.model', () => {
@@ -26,6 +27,7 @@ describe('Property Service', () => {
         Property.findAll.mockClear();
         Property.hasOne.mockClear();
         Property.findByPk.mockClear();
+        Property.destroy.mockClear();
         House.mockClear();
         Flat.mockClear();
         Garage.mockClear();
@@ -59,7 +61,7 @@ describe('Property Service', () => {
         });
     });
 
-    it('should return a property by id', async () => {
+    test('Read property by id', async () => {
         const mockProperty = {
             property_id: '1', propertyName: 'Test Property 1', user_id: '1', houseDetails: { property_id: '1', numberOfRooms: 2, hasGarden: true }, toJSON: function () {
                 return this;
@@ -76,6 +78,32 @@ describe('Property Service', () => {
                 { model: Flat, as: 'flatDetails' },
                 { model: Garage, as: 'garageDetails' },
             ],
+        });
+    });
+
+    test('Delete property by id', async () => {
+        Property.destroy.mockResolvedValueOnce(1);
+
+        const res = await propertyService.deleteProperty('1');
+
+        expect(res).toBe(1);
+        expect(Property.destroy).toHaveBeenCalledWith({
+            where: {
+                property_id: '1'
+            }
+        });
+    });
+
+    test('Delete property by id - Property not found', async () => {
+        Property.destroy.mockResolvedValueOnce(0);
+
+        const res = await propertyService.deleteProperty('1');
+
+        expect(res).toBe(0);
+        expect(Property.destroy).toHaveBeenCalledWith({
+            where: {
+                property_id: '1'
+            }
         });
     });
 });

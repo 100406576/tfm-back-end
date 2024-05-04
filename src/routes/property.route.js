@@ -30,6 +30,6 @@ router.get('/users/:username/properties', authMiddleware, userValidationMiddlewa
 router.get('/properties/:property_id', authMiddleware, propertyController.readProperty);
 // router.post('/users/:username/properties', authMiddleware, userValidationMiddleware, propertyController.createProperty);
 // router.put('/property/:property_id', authMiddleware, propertyController.editProperty);
-// router.delete('/property/:property_id', authMiddleware, propertyController.deleteProperty);
+router.delete('/properties/:property_id', authMiddleware, propertyController.deleteProperty);
 
 module.exports = router;

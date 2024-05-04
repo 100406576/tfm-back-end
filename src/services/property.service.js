@@ -39,10 +39,23 @@ const readProperty = async function(property_id) {
             { model: Garage, as: 'garageDetails' },
         ],
     });
+
+    if (property === null) {
+        return null;
+    }
     return cleanPropertyDetails(property);
+}
+
+const deleteProperty = async function(property_id) {
+    return await Property.destroy({
+        where: {
+            property_id: property_id
+        }
+    });
 }
   
 module.exports = {
     readPropertiesByUserId,
-    readProperty
+    readProperty,
+    deleteProperty
 };
