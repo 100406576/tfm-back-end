@@ -23,7 +23,7 @@ describe("Users integration test", () => {
       server = app.listen(PORT, () => {
         console.log(`Server listening at http://localhost:${PORT}`)
       });
-  });
+    });
   });
 
   afterAll(done => {

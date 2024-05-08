@@ -1,4 +1,4 @@
-const sequelize = require('sequelize');
+const { sequelize, ValidationError } = require('sequelize');
 const userService = require('../services/user.service.js');
 const propertyService = require('../services/property.service.js');
 const NotFoundError = require('../errors/notFound.error.js');
@@ -40,6 +40,26 @@ const readProperty = async (req, res, next) => {
     }
 };
 
+const createProperty = async (req, res, next) => {
+    try {
+        const username = req.params.username;
+        const property = req.body;
+        const user = await userService.readUser(username);
+
+        if (await propertyService.readProperty(property.property_id)) {
+            throw new ValidationError('Property already exists');
+        }
+        
+        property.user_id = user.user_id;
+
+        const newProperty = await propertyService.createProperty(property);
+
+        res.status(201).json(newProperty);
+    } catch (error) {
+        next(error);
+    }
+};
+
 const deleteProperty = async (req, res, next) => {
     try {
         const property_id = req.params.property_id;
@@ -64,5 +84,6 @@ const deleteProperty = async (req, res, next) => {
 module.exports = {
     readPropertiesOfUser,
     readProperty,
+    createProperty,
     deleteProperty
 }

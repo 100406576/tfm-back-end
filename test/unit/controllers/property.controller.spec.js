@@ -78,6 +78,32 @@ describe('Property Controller', () => {
         }
     });
 
+    test('Create property OK', async () => {
+        const mockUser = { username: 'testuser1', user_id: 1 };
+        const mockProperty = { property_id: 1, user_id: 1, name: 'Property 1', address: 'calle italia 2', cadastralReference: '1234', houseDetails: { property_id: 1, numberOfRooms: 2, hasGarden: true } };
+        userService.readUser.mockResolvedValue(mockUser);
+        propertyService.readProperty.mockResolvedValue(null);
+        propertyService.createProperty.mockResolvedValue(mockProperty);
+
+        const res = await request(app).post('/users/testuser1/properties').send(mockProperty);
+
+        expect(res.statusCode).toEqual(201);
+        expect(res.body).toEqual(mockProperty);
+    });
+
+    test('Create property KO - Property already exists', async () => {
+        const mockUser = { username: 'testuser1', user_id: 1 };
+        const mockProperty = { property_id: 1, user_id: 1, name: 'Property 1', address: 'calle italia 2', cadastralReference: '1234', houseDetails: { property_id: 1, numberOfRooms: 2, hasGarden: true } };
+        userService.readUser.mockResolvedValue(mockUser);
+        propertyService.readProperty.mockResolvedValue(mockProperty);
+
+        try {
+            await request(app).post('/users/testuser1/properties').send(mockProperty);
+        } catch (error) {
+            expect(error.message).toStrictEqual('Property already exists');
+        }
+    });
+
     test('Delete property OK', async () => {
         propertyService.readProperty.mockResolvedValue({ property_id: 1, user_id: 1 });
         propertyService.deleteProperty.mockResolvedValue(1);

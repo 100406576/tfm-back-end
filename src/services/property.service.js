@@ -4,6 +4,10 @@ const Flat = require('../models/flat.model');
 const Garage = require('../models/garage.model');
 
 const cleanPropertyDetails = (property) => {
+    if (property === null) {
+        return null;
+    }
+
     const propertyObject = property.toJSON();
     if (!propertyObject.houseDetails) delete propertyObject.houseDetails;
     if (!propertyObject.flatDetails) delete propertyObject.flatDetails;
@@ -39,11 +43,40 @@ const readProperty = async function(property_id) {
             { model: Garage, as: 'garageDetails' },
         ],
     });
-
-    if (property === null) {
-        return null;
-    }
     return cleanPropertyDetails(property);
+}
+
+const createProperty = async function(property) {
+
+    const createdProperty = await Property.create({
+        propertyName: property.propertyName,
+        address: property.address,
+        cadastralReference: property.cadastralReference,
+        user_id: property.user_id,
+    });
+
+    if (property.houseDetails) {
+        await House.create({
+            property_id: createdProperty.property_id,
+            ...property.houseDetails
+        });
+    }
+
+    if (property.flatDetails) {
+        await Flat.create({
+            property_id: createdProperty.property_id,
+            ...property.flatDetails
+        });
+    }
+
+    if (property.garageDetails) {
+        await Garage.create({
+            property_id: createdProperty.property_id,
+            ...property.garageDetails
+        });
+    }
+
+    return cleanPropertyDetails(createdProperty);
 }
 
 const deleteProperty = async function(property_id) {
@@ -57,5 +90,6 @@ const deleteProperty = async function(property_id) {
 module.exports = {
     readPropertiesByUserId,
     readProperty,
+    createProperty,
     deleteProperty
 };

@@ -9,17 +9,24 @@ jest.mock('../../../src/models/property.model', () => {
         findAll: jest.fn(),
         hasOne: jest.fn(),
         findByPk: jest.fn(),
+        create: jest.fn(),
         destroy: jest.fn(),
     };
 });
 jest.mock('../../../src/models/house.model', () => {
-    return jest.fn();
+    return {
+        create: jest.fn(),
+    };
 });
 jest.mock('../../../src/models/flat.model', () => {
-    return jest.fn();
+    return {
+        create: jest.fn(),
+    };
 });
 jest.mock('../../../src/models/garage.model', () => {
-    return jest.fn();
+    return {
+        create: jest.fn(),
+    };
 });
 
 describe('Property Service', () => {
@@ -27,10 +34,11 @@ describe('Property Service', () => {
         Property.findAll.mockClear();
         Property.hasOne.mockClear();
         Property.findByPk.mockClear();
+        Property.create.mockClear();
         Property.destroy.mockClear();
-        House.mockClear();
-        Flat.mockClear();
-        Garage.mockClear();
+        House.create.mockClear();
+        Flat.create.mockClear();
+        Garage.create.mockClear();
     });
 
     test('Return properties by user id', async () => {
@@ -79,6 +87,108 @@ describe('Property Service', () => {
                 { model: Garage, as: 'garageDetails' },
             ],
         });
+    });
+
+    test('Create property House', async () => {
+        const mockProperty = {
+            propertyName: "Casa 1",
+            address: "Calle inventada 2, Bajo A",
+            cadastralReference: "1234",
+            user_id: "1",
+            houseDetails: {
+                numberOfRooms: 2,
+                hasGarden: false
+            }
+        };
+        const createdProperty = {
+            property_id: "1",
+            propertyName: "Casa 1",
+            address: "Calle inventada 2, Bajo A",
+            cadastralReference: "1234",
+            user_id: "1",
+            houseDetails: {
+                numberOfRooms: 2,
+                hasGarden: false,
+                property_id: "1"
+            },
+            toJSON: function () {
+                return this;
+            }
+        };
+        Property.create.mockResolvedValueOnce(createdProperty);
+        House.create.mockResolvedValueOnce(createdProperty.houseDetails);
+
+        const property = await propertyService.createProperty(mockProperty);
+
+        expect(property).toEqual(createdProperty);
+    });
+
+    test('Create property Flat', async () => {
+const mockProperty = {
+            propertyName: "Piso 1",
+            address: "Calle inventada 2, Bajo A",
+            cadastralReference: "1234",
+            user_id: "1",
+            flatDetails: {
+                floor: 1,
+                hasBalcony: true,
+                numberOfRooms: 3
+            }
+        };
+        const createdProperty = {
+            property_id: "1",
+            propertyName: "Piso 1",
+            address: "Calle inventada 2, Bajo A",
+            cadastralReference: "1234",
+            user_id: "1",
+            flatDetails: {
+                floor: 1,
+                hasBalcony: true,
+                numberOfRooms: 3,
+                property_id: "1"
+            },
+            toJSON: function () {
+                return this;
+            }
+        };
+        Property.create.mockResolvedValueOnce(createdProperty);
+
+        const property = await propertyService.createProperty(mockProperty);
+
+        expect(property).toEqual(createdProperty);
+    });
+
+    test('Create property Garage', async () => {
+        const mockProperty = {
+            propertyName: "Garaje 1",
+            address: "Calle inventada 2, Bajo A",
+            cadastralReference: "1234",
+            user_id: "1",
+            garageDetails: {
+                hasStorage: true,
+                hasAutomaticDoor: true
+            }
+        };
+        const createdProperty = {
+            property_id: "1",
+            propertyName: "Garaje 1",
+            address: "Calle inventada 2, Bajo A",
+            cadastralReference: "1234",
+            user_id: "1",
+            garageDetails: {
+                capacity: 1,
+                isPrivate: true,
+                property_id: "1"
+            },
+            toJSON: function () {
+                return this;
+            }
+        };
+        Property.create.mockResolvedValueOnce(createdProperty);
+
+        const property = await propertyService.createProperty(mockProperty);
+
+        expect(property).toEqual(createdProperty);
     });
 
     test('Delete property by id', async () => {

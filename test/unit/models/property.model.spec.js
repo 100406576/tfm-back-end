@@ -68,13 +68,13 @@ describe('Property Model', () => {
         expect(foundProperty.property_id).toBe('1');
     });
 
-    /*test('Create property', async () => {
+    test('Create property', async () => {
         const mockProperty = { property_id: '2', propertyName: 'Test Property 2', address: '456 Test St', cadastralReference: '0987654321', user_id: '2' };
         const createdProperty = await PropertyMock.create(mockProperty);
         expect(createdProperty.property_id).toBe('2');
     });   
 
-    test('Update property', async () => {
+    /*test('Update property', async () => {
         const dataProperty = { propertyName: 'Updated Property Name' };
         const property_id = '1';
         const affectedRows = await PropertyMock.update(dataProperty, { where: { property_id: property_id } });
