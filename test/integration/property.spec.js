@@ -6,6 +6,10 @@ const userService = require('../../src/services/user.service.js');
 const { PORT } = require('../../src/config/config.js');
 
 const authMiddlewareMock = (req, res, next) => {
+  req.user = {
+    username: 'testIntegration',
+    user_id: '1',
+  };
   next();
 };
 const userValidationMiddlewareMock = (req, res, next) => {
@@ -54,27 +58,46 @@ describe("Property integration test", () => {
     propertyId = res.body.property_id;
   });
 
-    test("Read properties of user OK", async () => {
-      const res = await request(app).get(`/users/${mockUser.username}/properties`).send();
-      expect(res.statusCode).toBe(200);
-      expect(res.body).toHaveLength(1);
+  test("Read properties of user OK", async () => {
+    const res = await request(app).get(`/users/${mockUser.username}/properties`).send();
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveLength(1);
+  });
+
+  test("Read property OK", async () => {
+    const res = await request(app).get(`/properties/${propertyId}`).send();
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('property_id', propertyId);
+
+  });
+
+  test("Read property KO - Property not found", async () => {
+    const res = await request(app).get(`/properties/0`).send();
+    expect(res.statusCode).toBe(404);
+  });
+
+  test("Update property OK", async () => {
+    const res = await request(app).put(`/properties/${propertyId}`).send({
+      propertyName: "Casa 2",
+      address: "Calle inventada 2, Bajo A",
+      cadastralReference: "1234",
+      houseDetails: {
+        numberOfRooms: 3,
+        hasGarden: false
+      }
     });
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('propertyName', 'Casa 2');
+  });
 
-    /*test("Read property OK", async () => {
-      const res = await request(app).get(`/properties/${propertyId}`).send();
-      expect(res.statusCode).toBe(200);
-      expect(res.body).toHaveProperty('property_id', propertyId);
+  test("Delete property OK", async () => {
+    const res = await request(app).delete(`/properties/${propertyId}`).send();
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('message', 'Property deleted');
+  });
 
-    });*/
-
-    test("Read property KO - Property not found", async () => {
-      const res = await request(app).get(`/properties/0`).send();
-      expect(res.statusCode).toBe(404);
-    });
-
-  /*test("Delete property OK", async () => {
-      const res = await request(app).delete(`/properties/${propertyId}`).send();
-      expect(res.statusCode).toBe(200);
-      expect(res.body).toHaveProperty('message', 'Property deleted');
-    });*/
+  test("Delete property KO - Property not found", async () => {
+    const res = await request(app).delete(`/properties/0`).send();
+    expect(res.statusCode).toBe(404);
+  });
 });

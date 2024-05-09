@@ -15,15 +15,24 @@ Property.init(
         },
         propertyName: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            set(value) {
+                this.setDataValue('propertyName', value === "" ? null : value);
+            },
         },
         address: {
             type: DataTypes.STRING,
             allowNull: false,
+            set(value) {
+                this.setDataValue('address', value === "" ? null : value);
+            },
         },
         cadastralReference: {
             type: DataTypes.STRING,
             allowNull: false,
+            set(value) {
+                this.setDataValue('cadastralReference', value === "" ? null : value);
+            },
         },
         user_id: {
             type: DataTypes.UUID,

@@ -15,27 +15,22 @@ const cleanPropertyDetails = (property) => {
     return propertyObject;
 };
 
-const readPropertiesByUserId = async function(user_id) {
-    try {
-      const properties = await Property.findAll({
+const readPropertiesByUserId = async function (user_id) {
+    const properties = await Property.findAll({
         where: { user_id: user_id },
         include: [
-          { model: House, as: 'houseDetails' },
-          { model: Flat, as: 'flatDetails' },
-          { model: Garage, as: 'garageDetails' },
+            { model: House, as: 'houseDetails' },
+            { model: Flat, as: 'flatDetails' },
+            { model: Garage, as: 'garageDetails' },
         ],
-      });
-  
-      const cleanedProperties = properties.map(cleanPropertyDetails);
-  
-      return cleanedProperties;
-    } catch (error) {
-      console.error(error);
-      throw new Error('Error al obtener las propiedades del usuario');
-    }
+    });
+
+    const cleanedProperties = properties.map(cleanPropertyDetails);
+
+    return cleanedProperties;
 };
 
-const readProperty = async function(property_id) {
+const readProperty = async function (property_id) {
     const property = await Property.findByPk(property_id, {
         include: [
             { model: House, as: 'houseDetails' },
@@ -46,7 +41,7 @@ const readProperty = async function(property_id) {
     return cleanPropertyDetails(property);
 }
 
-const createProperty = async function(property) {
+const createProperty = async function (property) {
 
     const createdProperty = await Property.create({
         propertyName: property.propertyName,
@@ -76,20 +71,65 @@ const createProperty = async function(property) {
         });
     }
 
-    return cleanPropertyDetails(createdProperty);
+    return await readProperty(createdProperty.property_id);
 }
 
-const deleteProperty = async function(property_id) {
+const updateProperty = async function (property_id, property) {
+    const updatedProperty = await Property.update({
+        propertyName: property.propertyName,
+        address: property.address,
+        cadastralReference: property.cadastralReference,
+    }, {
+        where: {
+            property_id: property_id
+        }
+    });
+
+    if (property.houseDetails) {
+        await House.update({
+            ...property.houseDetails
+        }, {
+            where: {
+                property_id: property_id
+            }
+        });
+    }
+
+    if (property.flatDetails) {
+        await Flat.update({
+            ...property.flatDetails
+        }, {
+            where: {
+                property_id: property_id
+            }
+        });
+    }
+
+    if (property.garageDetails) {
+        await Garage.update({
+            ...property.garageDetails
+        }, {
+            where: {
+                property_id: property_id
+            }
+        });
+    }
+
+    return await readProperty(property_id);
+}
+
+const deleteProperty = async function (property_id) {
     return await Property.destroy({
         where: {
             property_id: property_id
         }
     });
 }
-  
+
 module.exports = {
     readPropertiesByUserId,
     readProperty,
     createProperty,
+    updateProperty,
     deleteProperty
 };

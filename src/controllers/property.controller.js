@@ -60,6 +60,27 @@ const createProperty = async (req, res, next) => {
     }
 };
 
+const editProperty = async (req, res, next) => {
+    try {
+        const property_id = req.params.property_id;
+        const property = await propertyService.readProperty(property_id);
+
+        if (!property) {
+            throw new NotFoundError('Property not found');
+        }
+
+        if(property.user_id !== req.user.user_id) {
+            throw new ForbiddenError('You are not allowed to edit this property');
+        }
+
+        const updatedProperty = await propertyService.updateProperty(property_id, req.body);
+
+        res.status(200).json(updatedProperty);
+    } catch (error) {
+        next(error);
+    }
+};
+
 const deleteProperty = async (req, res, next) => {
     try {
         const property_id = req.params.property_id;
@@ -85,5 +106,6 @@ module.exports = {
     readPropertiesOfUser,
     readProperty,
     createProperty,
+    editProperty,
     deleteProperty
 }

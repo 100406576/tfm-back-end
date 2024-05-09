@@ -104,6 +104,55 @@ describe('Property Controller', () => {
         }
     });
 
+    test('Edit property OK', async () => {
+        const mockUser = { username: 'testuser1', user_id: 1 };
+        const mockProperty = { user_id: 1, name: 'Property 2', address: 'calle Hungría 2', cadastralReference: '1234', houseDetails: { property_id: 1, numberOfRooms: 2, hasGarden: false } };
+        userService.readUser.mockResolvedValue(mockUser);
+        propertyService.readProperty.mockResolvedValue(null);
+        propertyService.updateProperty.mockResolvedValue(mockProperty);
+        propertyService.readProperty.mockResolvedValue(mockProperty);
+
+        const res = await request(app).put('/properties/1').send(mockProperty);
+
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toEqual(mockProperty);
+    });
+
+    test('Edit property KO - Property not found', async () => {
+        propertyService.readProperty.mockResolvedValue(null);
+
+        try {
+            await request(app).put('/properties/999').send({});
+        } catch (error) {
+            expect(error).toBeInstanceOf(NotFoundError);
+            expect(error.message).toStrictEqual('Property not found');
+        }
+    });
+
+    test('Edit property KO - Forbidden', async () => {
+        const mockProperty = { property_id: 1, user_id: 2, name: 'Property 1', address: 'calle italia 2', cadastralReference: '1234', houseDetails: { property_id: 1, numberOfRooms: 2, hasGarden: true } };
+        propertyService.readProperty.mockResolvedValue(mockProperty);
+
+        try {
+            await request(app).put('/properties/1').set('user', { user_id: 2 });
+        } catch (error) {
+            expect(error).toBeInstanceOf(ForbiddenError);
+            expect(error.message).toStrictEqual('You are not allowed to edit this property');
+        }
+    });
+
+    test('Delete property KO - Forbidden', async () => {
+        const mockProperty = { property_id: 1, user_id: 2, name: 'Property 1', address: 'calle italia 2', cadastralReference: '1234', houseDetails: { property_id: 1, numberOfRooms: 2, hasGarden: true } };
+        propertyService.readProperty.mockResolvedValue(mockProperty);
+
+        try {
+            await request(app).delete('/properties/1').set('user', { user_id: 2 });
+        } catch (error) {
+            expect(error).toBeInstanceOf(ForbiddenError);
+            expect(error.message).toStrictEqual('You are not allowed to delete this property');
+        }
+    });
+
     test('Delete property OK', async () => {
         propertyService.readProperty.mockResolvedValue({ property_id: 1, user_id: 1 });
         propertyService.deleteProperty.mockResolvedValue(1);
