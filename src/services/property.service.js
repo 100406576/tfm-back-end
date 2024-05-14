@@ -75,7 +75,7 @@ const createProperty = async function (property) {
 }
 
 const updateProperty = async function (property_id, property) {
-    const updatedProperty = await Property.update({
+    await Property.update({
         propertyName: property.propertyName,
         address: property.address,
         cadastralReference: property.cadastralReference,

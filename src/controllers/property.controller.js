@@ -6,14 +6,9 @@ const ForbiddenError = require('../errors/forbidden.error.js');
 
 const readPropertiesOfUser = async (req, res, next) => {
     try {
-        const username = req.params.username;
-        const user = await userService.readUser(username);
+        const user_id = req.user.user_id;
 
-        if (!user) {
-            throw new NotFoundError('User not found');
-        }
-
-        const properties = await propertyService.readPropertiesByUserId(user.user_id);
+        const properties = await propertyService.readPropertiesByUserId(user_id);
 
         res.status(200).json(properties);
     } catch (error) {
@@ -42,15 +37,13 @@ const readProperty = async (req, res, next) => {
 
 const createProperty = async (req, res, next) => {
     try {
-        const username = req.params.username;
         const property = req.body;
-        const user = await userService.readUser(username);
 
         if (await propertyService.readProperty(property.property_id)) {
             throw new ValidationError('Property already exists');
         }
         
-        property.user_id = user.user_id;
+        property.user_id = req.user.user_id;
 
         const newProperty = await propertyService.createProperty(property);
 

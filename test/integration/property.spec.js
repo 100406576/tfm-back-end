@@ -22,7 +22,6 @@ describe("Property integration test", () => {
   let server;
   const mockUser = { username: 'testIntegration', user_id: "1", name: 'paco', lastName: 'perez', password: "1234", email: 'testuser2@example.com' };
   let propertyId;
-  let token;
 
   beforeAll(async () => {
     await syncDatabase().then(() => {
@@ -38,13 +37,14 @@ describe("Property integration test", () => {
     await new Promise(resolve => server.close(resolve));
   });
 
-  test("Read properties of user KO - User not found", async () => {
-    const res = await request(app).get(`/users/nonexistentuser/properties`).send();
-    expect(res.statusCode).toBe(404);
+  test("Read properties of user OK- No properties", async () => {
+    const res = await request(app).get(`/properties`).send();
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveLength(0);
   });
 
   test("Create property OK", async () => {
-    const res = await request(app).post(`/users/${mockUser.username}/properties`).send({
+    const res = await request(app).post(`/properties`).send({
       propertyName: "Casa 1",
       address: "Calle inventada 2, Bajo A",
       cadastralReference: "1234",
@@ -59,7 +59,7 @@ describe("Property integration test", () => {
   });
 
   test("Read properties of user OK", async () => {
-    const res = await request(app).get(`/users/${mockUser.username}/properties`).send();
+    const res = await request(app).get(`/properties`).send();
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveLength(1);
   });

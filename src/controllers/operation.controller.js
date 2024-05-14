@@ -1,0 +1,54 @@
+const { sequelize, ValidationError } = require('sequelize');
+const userService = require('../services/user.service.js');
+const propertyService = require('../services/property.service.js');
+const operationService = require('../services/operation.service.js');
+const NotFoundError = require('../errors/notFound.error.js');
+const ForbiddenError = require('../errors/forbidden.error.js');
+
+
+const readOperationsOfProperty = async (req, res, next) => {
+    try {
+        const property_id = req.params.property_id;
+        const property = await propertyService.readProperty(property_id);
+
+        if (!property) {
+            throw new NotFoundError('Property not found');
+        }
+
+        if (property.user_id !== req.user.user_id) {
+            throw new ForbiddenError('You are not allowed to see the operations of this property');
+        }
+
+        const operations = await operationService.readOperationsByPropertyId(property_id);
+
+        res.status(200).json(operations);
+    } catch (error) {
+        next(error);
+    }
+}
+
+const readOperation = async (req, res, next) => {
+    try {
+        const operation_id = req.params.operation_id;
+        const operation = await operationService.readOperation(operation_id);
+
+        if (!operation) {
+            throw new NotFoundError('Operation not found');
+        }
+
+        const property = await propertyService.readProperty(operation.property_id);
+
+        if (property.user_id !== req.user.user_id) {
+            throw new ForbiddenError('You are not allowed to see the operation');
+        }
+
+        res.status(200).json(operation);
+    } catch (error) {
+        next(error);
+    }
+}
+
+module.exports = {
+    readOperationsOfProperty,
+    readOperation
+}

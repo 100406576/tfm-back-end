@@ -21,28 +21,15 @@ jest.mock('../../../src/services/property.service.js');
 
 describe('Property Controller', () => {
     test('Read properties of user OK', async () => {
-        const mockUser = { username: 'testuser1', user_id: 1 };
         const mockProperties = [{
             property_id: '1', propertyName: 'Test Property 1', user_id: '1', houseDetails: { property_id: '1', numberOfRooms: 2, hasGarden: true }
         }];
-        userService.readUser.mockResolvedValue(mockUser);
         propertyService.readPropertiesByUserId.mockResolvedValue(mockProperties);
 
-        const res = await request(app).get('/users/testuser1/properties');
+        const res = await request(app).get('/properties');
 
         expect(res.statusCode).toEqual(200);
         expect(res.body).toEqual(mockProperties);
-    });
-
-    test('Read properties of user KO - User not found', async () => {
-        userService.readUser.mockResolvedValue(null);
-
-        try {
-            await request(app).get('/users/nonexistuser/properties');
-        } catch (error) {
-            expect(error).toBeInstanceOf(NotFoundError);
-            expect(error.message).toStrictEqual('User not found');
-        }
     });
 
     test('Read property OK', async () => {
@@ -85,7 +72,7 @@ describe('Property Controller', () => {
         propertyService.readProperty.mockResolvedValue(null);
         propertyService.createProperty.mockResolvedValue(mockProperty);
 
-        const res = await request(app).post('/users/testuser1/properties').send(mockProperty);
+        const res = await request(app).post('/properties').send(mockProperty);
 
         expect(res.statusCode).toEqual(201);
         expect(res.body).toEqual(mockProperty);
