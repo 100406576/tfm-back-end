@@ -31,6 +31,7 @@ Property.init(
         cadastralReference: {
             type: DataTypes.STRING,
             allowNull: false,
+            unique: true,
             set(value) {
                 this.setDataValue('cadastralReference', value === "" ? null : value);
             },

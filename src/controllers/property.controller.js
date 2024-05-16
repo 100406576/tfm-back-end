@@ -38,11 +38,6 @@ const readProperty = async (req, res, next) => {
 const createProperty = async (req, res, next) => {
     try {
         const property = req.body;
-
-        if (await propertyService.readProperty(property.property_id)) {
-            throw new ValidationError('Property already exists');
-        }
-        
         property.user_id = req.user.user_id;
 
         const newProperty = await propertyService.createProperty(property);

@@ -74,6 +74,7 @@ describe("Property integration test", () => {
   test("Read property KO - Property not found", async () => {
     const res = await request(app).get(`/properties/0`).send();
     expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('error', 'Property not found');
   });
 
   test("Update property OK", async () => {
@@ -99,5 +100,6 @@ describe("Property integration test", () => {
   test("Delete property KO - Property not found", async () => {
     const res = await request(app).delete(`/properties/0`).send();
     expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('error', 'Property not found');
   });
 });
