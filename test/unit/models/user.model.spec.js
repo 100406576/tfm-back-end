@@ -43,7 +43,16 @@ describe('User Model', () => {
         const mockUser = { username: 'testuser2', name: 'john', lastName: 'doe', password: 'password', email: 'testuser2@example.com' };
         const createdUser = await UserMock.create(mockUser);
         expect(createdUser.username).toBe('testuser2');
-    });   
+    }); 
+    
+    test('Create user KO - missing required field', async () => {
+        const mockUser = { username: 'testuser2', name: 'john', lastName: 'doe', password: 'password' };
+        try {
+            await UserMock.create(mockUser);
+        } catch (error) {
+            expect(error.name).toBe('SequelizeValidationError');
+        }
+    });
 
     test('Update user', async () => {
         const dataUser = { name: 'updatedName' };

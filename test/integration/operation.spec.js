@@ -24,6 +24,7 @@ describe("Operation integration test", () => {
   const mockUser = { username: 'testIntegration', user_id: "1", name: 'paco', lastName: 'perez', password: "1234", email: 'testuser2@example.com' };
     const mockProperty = { propertyName: "Casa 1", address: "Calle inventada 2, Bajo A", cadastralReference: "1234", houseDetails: { numberOfRooms: 2, hasGarden: false } };
     let propertyId;
+    let operationId;
 
   beforeAll(async () => {
     await syncDatabase().then(() => {
@@ -45,6 +46,40 @@ describe("Operation integration test", () => {
     const res = await request(app).get(`/operations/property/${propertyId}`).send();
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveLength(0);
+  });
+
+  test("Create operation OK", async () => {
+    const mockOperation = { type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00, property_id: propertyId };
+    const res = await request(app).post("/operations").send(mockOperation);
+    expect(res.statusCode).toBe(201);
+    expect(res.body).toHaveProperty('operation_id');
+    operationId = res.body.operation_id;
+  });
+
+  test("Create operation KO - Property not found", async () => {
+    const mockOperation = { type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00, property_id: 999 };
+    const res = await request(app).post("/operations").send(mockOperation);
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('error', 'Property not found');
+  });
+
+  test("Create operation KO - Validation Error", async () => {
+    const mockOperation = { type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00 };
+    const res = await request(app).post("/operations").send(mockOperation);
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toHaveProperty('error', 'property_id is required');
+  });
+
+  test("Read operations of property OK- One operation", async () => {
+    const res = await request(app).get(`/operations/property/${propertyId}`).send();
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveLength(1);
+  });
+
+  test("Read operation OK", async () => {
+    const res = await request(app).get(`/operations/${operationId}`).send();
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('operation_id', operationId);
   });
 
   test("Read operations KO - Property not found", async () => {

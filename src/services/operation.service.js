@@ -13,7 +13,12 @@ const readOperation = async function (operation_id) {
     return await Operation.findByPk(operation_id);
 }
 
+const createOperation = async function (operation) {
+    return await Operation.create(operation);
+}
+
 module.exports = {
     readOperationsByPropertyId,
-    readOperation
+    readOperation,
+    createOperation
 }

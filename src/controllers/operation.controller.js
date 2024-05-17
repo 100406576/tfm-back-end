@@ -48,7 +48,33 @@ const readOperation = async (req, res, next) => {
     }
 }
 
+const createOperation = async (req, res, next) => {
+    try {
+        const body = req.body;
+
+        if(!body.property_id) {
+            throw new ValidationError('property_id is required');
+        }
+
+        const property = await propertyService.readProperty(body.property_id);
+
+        if (!property) {
+            throw new NotFoundError('Property not found');
+        }
+
+        if (property.user_id !== req.user.user_id) {
+            throw new ForbiddenError('You are not allowed to create operations for this property');
+        }
+
+        const operation = await operationService.createOperation(body);
+        res.status(201).json(operation);
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     readOperationsOfProperty,
-    readOperation
+    readOperation,
+    createOperation
 }

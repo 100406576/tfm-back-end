@@ -57,7 +57,7 @@ describe('Operation Controller', () => {
     });
 
     test('Read operation OK', async () => {
-        const mockOperation = { id: 1, type: 'Mensualidad', description: "Mensualidad abril 2024", value: 900.00, property_id: 1 };
+        const mockOperation = { id: 1, type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00, property_id: 1 };
 
         operationService.readOperation.mockResolvedValue(mockOperation);
         propertyService.readProperty.mockResolvedValue({ property_id: 1, user_id: 1 });
@@ -80,7 +80,7 @@ describe('Operation Controller', () => {
     });
 
     test('Read operation KO - Forbidden', async () => {
-        const mockOperation = { id: 1, type: 'Mensualidad', description: "Mensualidad abril 2024", value: 900.00, property_id: 1 };
+        const mockOperation = { id: 1, type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00, property_id: 1 };
 
         operationService.readOperation.mockResolvedValue(mockOperation);
         propertyService.readProperty.mockResolvedValue({ property_id: 1, user_id: 2 });
@@ -90,6 +90,63 @@ describe('Operation Controller', () => {
         } catch (error) {
             expect(error).toBeInstanceOf(ForbiddenError);
             expect(error.message).toStrictEqual('You are not allowed to see the operation');
+        }
+    });
+
+    test('Create operation OK', async () => {
+        const mockOperation = { type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00, property_id: 1 };
+
+        operationService.createOperation.mockResolvedValue(mockOperation);
+        propertyService.readProperty.mockResolvedValue({ property_id: 1, user_id: 1 });
+
+        const res = await request(app)
+            .post('/operations')
+            .send(mockOperation);
+
+        expect(res.statusCode).toEqual(201);
+        expect(res.body).toEqual(mockOperation);
+    });
+
+    test('Create operation KO - Validation error', async () => {
+        const mockOperation = { type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00 };
+
+        try {
+            await request(app)
+                .post('/operations')
+                .send(mockOperation);
+        } catch (error) {
+            expect(error).toBeInstanceOf(ValidationError);
+            expect(error.message).toStrictEqual('property_id is required');
+        }
+    });
+
+    test('Create operation KO - Property not found', async () => {
+        const mockOperation = { type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00, property_id: 999 };
+
+        propertyService.readProperty.mockResolvedValue(null);
+
+        try {
+            await request(app)
+                .post('/operations')
+                .send(mockOperation);
+        } catch (error) {
+            expect(error).toBeInstanceOf(NotFoundError);
+            expect(error.message).toStrictEqual('Property not found');
+        }
+    });
+
+    test('Create operation KO - Forbidden', async () => {
+        const mockOperation = { type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00, property_id: 1 };
+
+        propertyService.readProperty.mockResolvedValue({ property_id: 1, user_id: 2 });
+
+        try {
+            await request(app)
+                .post('/operations')
+                .send(mockOperation);
+        } catch (error) {
+            expect(error).toBeInstanceOf(ForbiddenError);
+            expect(error.message).toStrictEqual('You are not allowed to create operations for this property');
         }
     });
 });

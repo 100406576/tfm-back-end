@@ -74,6 +74,15 @@ describe('Property Model', () => {
         expect(createdProperty.property_id).toBe('2');
     });   
 
+    test('Create property missing parameter', async () => {
+        const mockProperty = { property_id: '3', address: '789 Test St', cadastralReference: '0987654321', user_id: '3'};
+        try {
+            await PropertyMock.create(mockProperty);
+        } catch (error) {
+            expect(error.name).toBe('SequelizeValidationError');
+        }
+    });
+
     test('Create property with missing required field', async () => {
         const mockProperty = { property_id: '3', address: '789 Test St', cadastralReference: '0987654321', user_id: '3' };
         try {
