@@ -5,9 +5,9 @@ const DBConnectionMock = new SequelizeMock();
 
 const OperationMock = DBConnectionMock.define('Operation', {
     operation_id: '1',
-    type: 'Test Type',
     description: 'Test Description',
     date: new Date(),
+    type: 'income',
     value: 100.00,
     property_id: '1',
 });
@@ -17,18 +17,18 @@ OperationMock.$queryInterface.$useHandler(function(query, queryOptions, done) {
         return [
             OperationMock.build({
                 operation_id: '1',
-                type: 'Test Type',
                 description: 'Test Description',
                 date: new Date(),
+                type: 'income',
                 value: 100.00,
                 property_id: '1',
             }),
             OperationMock.build({
                 operation_id: '2',
-                type: 'Test Type 2',
                 description: 'Test Description 2',
                 date: new Date(),
-                value: 200.00,
+                type: 'expense',
+                value: -200.00,
                 property_id: '2',
             }),
         ];
@@ -37,9 +37,9 @@ OperationMock.$queryInterface.$useHandler(function(query, queryOptions, done) {
     if (query === 'findOne') {
         return OperationMock.build({
             operation_id: '1',
-            type: 'Test Type',
             description: 'Test Description',
             date: new Date(),
+            type: 'income',
             value: 100.00,
             property_id: '1',
         });
@@ -77,7 +77,7 @@ describe('Operation Model', () => {
     });
 
     test('Create operation', async () => {
-        const mockOperation = { operation_id: '2', type: 'Test Type 2', description: 'Test Description 2', date: new Date(), value: 200.00, property_id: '2' };
+        const mockOperation = { operation_id: '2', description: 'Test Description 2', date: new Date(), type: 'expense', value: -200.00, property_id: '2' };
         const createdOperation = await OperationMock.create(mockOperation);
         expect(createdOperation.operation_id).toBe('2');
     });   

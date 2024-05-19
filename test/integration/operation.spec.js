@@ -49,7 +49,7 @@ describe("Operation integration test", () => {
   });
 
   test("Create operation OK", async () => {
-    const mockOperation = { type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00, property_id: propertyId };
+    const mockOperation = { description: "Mensualidad abril 2024", date: new Date().toISOString(), type: 'income', value: 900.00, property_id: propertyId };
     const res = await request(app).post("/operations").send(mockOperation);
     expect(res.statusCode).toBe(201);
     expect(res.body).toHaveProperty('operation_id');
@@ -57,14 +57,14 @@ describe("Operation integration test", () => {
   });
 
   test("Create operation KO - Property not found", async () => {
-    const mockOperation = { type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00, property_id: 999 };
+    const mockOperation = { description: "Mensualidad abril 2024", date: new Date().toISOString(), type: 'income', value: 900.00, property_id: 999 };
     const res = await request(app).post("/operations").send(mockOperation);
     expect(res.statusCode).toBe(404);
     expect(res.body).toHaveProperty('error', 'Property not found');
   });
 
   test("Create operation KO - Validation Error", async () => {
-    const mockOperation = { type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00 };
+    const mockOperation = { description: "Mensualidad abril 2024", date: new Date().toISOString(), type: 'income', value: 900.00};
     const res = await request(app).post("/operations").send(mockOperation);
     expect(res.statusCode).toBe(400);
     expect(res.body).toHaveProperty('error', 'property_id is required');

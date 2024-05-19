@@ -21,9 +21,11 @@ jest.mock('../../../src/services/property.service.js');
 jest.mock('../../../src/services/operation.service.js');
 
 describe('Operation Controller', () => {
+    const mockOperation = { id: 1, description: "Mensualidad abril 2024", date: new Date().toISOString(), type: 'income', value: 900.00, property_id: 1 };
+
     test('Read operations of property OK', async () => {
-        const mockOperations = [{ id: 1, type: 'Mensualidad', description: "Mensualidad abril 2024", value: 900.00, property_id: 1 },
-        { id: 2, type: 'Factura', description: "Gas abril 2024", value: -40.00, property_id: 1 }];
+        const mockOperations = [mockOperation,
+        { id: 2, description: "Gas abril 2024", date: new Date().toISOString(), type: 'expense', value: -40.00, property_id: 1 }];
 
         propertyService.readProperty.mockResolvedValue({ property_id: 1, user_id: 1 });
         operationService.readOperationsByPropertyId.mockResolvedValue(mockOperations);
@@ -57,8 +59,6 @@ describe('Operation Controller', () => {
     });
 
     test('Read operation OK', async () => {
-        const mockOperation = { id: 1, type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00, property_id: 1 };
-
         operationService.readOperation.mockResolvedValue(mockOperation);
         propertyService.readProperty.mockResolvedValue({ property_id: 1, user_id: 1 });
 
@@ -80,8 +80,6 @@ describe('Operation Controller', () => {
     });
 
     test('Read operation KO - Forbidden', async () => {
-        const mockOperation = { id: 1, type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00, property_id: 1 };
-
         operationService.readOperation.mockResolvedValue(mockOperation);
         propertyService.readProperty.mockResolvedValue({ property_id: 1, user_id: 2 });
 
@@ -94,8 +92,6 @@ describe('Operation Controller', () => {
     });
 
     test('Create operation OK', async () => {
-        const mockOperation = { type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00, property_id: 1 };
-
         operationService.createOperation.mockResolvedValue(mockOperation);
         propertyService.readProperty.mockResolvedValue({ property_id: 1, user_id: 1 });
 
@@ -108,8 +104,6 @@ describe('Operation Controller', () => {
     });
 
     test('Create operation KO - Validation error', async () => {
-        const mockOperation = { type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00 };
-
         try {
             await request(app)
                 .post('/operations')
@@ -121,14 +115,14 @@ describe('Operation Controller', () => {
     });
 
     test('Create operation KO - Property not found', async () => {
-        const mockOperation = { type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00, property_id: 999 };
+        const mockOperationNotFound = { type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00, property_id: 999 };
 
         propertyService.readProperty.mockResolvedValue(null);
 
         try {
             await request(app)
                 .post('/operations')
-                .send(mockOperation);
+                .send(mockOperationNotFound);
         } catch (error) {
             expect(error).toBeInstanceOf(NotFoundError);
             expect(error.message).toStrictEqual('Property not found');
@@ -136,8 +130,6 @@ describe('Operation Controller', () => {
     });
 
     test('Create operation KO - Forbidden', async () => {
-        const mockOperation = { type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00, property_id: 1 };
-
         propertyService.readProperty.mockResolvedValue({ property_id: 1, user_id: 2 });
 
         try {

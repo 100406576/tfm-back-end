@@ -17,8 +17,8 @@ describe('Property Service', () => {
 
     test('readOperationsByPropertyId', async () => {
         const property_id = 1;
-        const operations = [{ id: 1, type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00, property_id: 1 },
-        { id: 2, type: 'Factura', description: "Gas abril 2024", date: new Date().toISOString(), value: -40.00, property_id: 1 }];
+        const operations = [{ id: 1, description: "Mensualidad abril 2024", date: new Date().toISOString(), type: 'income', value: 900.00, property_id: 1 },
+        { id: 2, description: "Gas abril 2024", date: new Date().toISOString(), type: 'expense', value: -40.00, property_id: 1 }];
         Operation.findAll.mockResolvedValue(operations);
 
         const result = await operationService.readOperationsByPropertyId(property_id);
@@ -28,7 +28,7 @@ describe('Property Service', () => {
 
     test('readOperation', async () => {
         const operation_id = 1;
-        const operation = { id: 1, type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00, property_id: 1 };
+        const operation = { id: 1, description: "Mensualidad abril 2024", date: new Date().toISOString(), type: 'income', value: 900.00, property_id: 1 };
         Operation.findByPk.mockResolvedValue(operation);
 
         const result = await operationService.readOperation(operation_id);
@@ -37,7 +37,7 @@ describe('Property Service', () => {
     });
 
     test('createOperation', async () => {
-        const operation = { id: 1, type: 'Mensualidad', description: "Mensualidad abril 2024", date: new Date().toISOString(), value: 900.00, property_id: 1 }
+        const operation = { id: 1, description: "Mensualidad abril 2024", date: new Date().toISOString(), type: 'income', value: 900.00, property_id: 1 }
         Operation.create.mockResolvedValue(operation);
 
         const result = await operationService.createOperation(operation);

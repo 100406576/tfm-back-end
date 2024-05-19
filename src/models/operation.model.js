@@ -10,10 +10,6 @@ Operation.init(
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        type: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
         description: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -21,6 +17,16 @@ Operation.init(
         date: {
             type: DataTypes.DATE,
             allowNull: false,
+        },
+        type: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                isIn: {
+                    args: [['income', 'expense']],
+                    msg: "The type must be 'income' or 'expense'"
+                }
+            }
         },
         value: {
             type: DataTypes.DECIMAL(10, 2),
