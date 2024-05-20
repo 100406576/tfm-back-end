@@ -54,7 +54,7 @@ describe('Operation Controller', () => {
             await request(app).get('/operations/property/1');
         } catch (error) {
             expect(error).toBeInstanceOf(ForbiddenError);
-            expect(error.message).toStrictEqual('You are not allowed to see the operations of this property');
+            expect(error.message).toStrictEqual('You are not allowed to perform this operation on this property');
         }
     });
 
@@ -87,7 +87,7 @@ describe('Operation Controller', () => {
             await request(app).get('/operations/1');
         } catch (error) {
             expect(error).toBeInstanceOf(ForbiddenError);
-            expect(error.message).toStrictEqual('You are not allowed to see the operation');
+            expect(error.message).toStrictEqual('You are not allowed to perform this operation on this property');
         }
     });
 
@@ -138,7 +138,41 @@ describe('Operation Controller', () => {
                 .send(mockOperation);
         } catch (error) {
             expect(error).toBeInstanceOf(ForbiddenError);
-            expect(error.message).toStrictEqual('You are not allowed to create operations for this property');
+            expect(error.message).toStrictEqual('You are not allowed to perform this operation on this property');
+        }
+    });
+
+    test('Delete operation OK', async () => {
+        operationService.readOperation.mockResolvedValue(mockOperation);
+        propertyService.readProperty.mockResolvedValue({ property_id: 1, user_id: 1 });
+        operationService.deleteOperation.mockResolvedValue(1);
+
+        const res = await request(app).delete('/operations/1');
+
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toEqual({ message: 'Operation deleted' });
+    });
+
+    test('Delete operation KO - Operation not found', async () => {
+        operationService.readOperation.mockResolvedValue(null);
+
+        try {
+            await request(app).delete('/operations/999');
+        } catch (error) {
+            expect(error).toBeInstanceOf(NotFoundError);
+            expect(error.message).toStrictEqual('Operation not found');
+        }
+    });
+
+    test('Delete operation KO - Forbidden', async () => {
+        operationService.readOperation.mockResolvedValue(mockOperation);
+        propertyService.readProperty.mockResolvedValue({ property_id: 1, user_id: 2 });
+
+        try {
+            await request(app).delete('/operations/1');
+        } catch (error) {
+            expect(error).toBeInstanceOf(ForbiddenError);
+            expect(error.message).toStrictEqual('You are not allowed to perform this operation on this property');
         }
     });
 });

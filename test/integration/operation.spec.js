@@ -93,4 +93,17 @@ describe("Operation integration test", () => {
     expect(res.statusCode).toBe(404);
     expect(res.body).toHaveProperty('error', 'Operation not found');
   });
+
+  test("Delete operation OK", async () => {
+    const res = await request(app).delete(`/operations/${operationId}`).send();
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('message', 'Operation deleted');
+  });
+
+  test("Delete operation KO - Not Found", async () => {
+    const res = await request(app).delete(`/operations/999`).send();
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('error', 'Operation not found');
+  });
+
 });

@@ -5,7 +5,8 @@ jest.mock('../../../src/models/operation.model', () => {
     return {
         findAll: jest.fn(),
         findByPk: jest.fn(),
-        create: jest.fn()
+        create: jest.fn(),
+        destroy: jest.fn()
     };
 });
 
@@ -43,5 +44,14 @@ describe('Property Service', () => {
         const result = await operationService.createOperation(operation);
         expect(result).toEqual(operation);
         expect(Operation.create).toHaveBeenCalledWith(operation);
+    });
+
+    test('deleteOperation', async () => {
+        const operation_id = 1;
+        Operation.destroy.mockResolvedValue(1);
+
+        const result = await operationService.deleteOperation(operation_id);
+        expect(result).toEqual(1);
+        expect(Operation.destroy).toHaveBeenCalledWith({ where: { operation_id: operation_id } });
     });
 });

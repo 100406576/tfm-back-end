@@ -58,6 +58,14 @@ describe("Property integration test", () => {
     propertyId = res.body.property_id;
   });
 
+  test("Create property KO - Bad request", async () => {
+    const res = await request(app).post(`/properties`).send({
+      propertyName: "Casa 1",
+      address: "Calle inventada 2, Bajo A"
+    });
+    expect(res.statusCode).toBe(400);
+  });
+
   test("Read properties of user OK", async () => {
     const res = await request(app).get(`/properties`).send();
     expect(res.statusCode).toBe(200);

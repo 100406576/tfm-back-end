@@ -91,8 +91,8 @@ describe('Operation Model', () => {
         }
     });
 
-    /*test('Delete operation', async () => {
+    test('Delete operation', async () => {
         const deletedOperation = await OperationMock.destroy({ where: { operation_id: '1' } });
         expect(deletedOperation).toBe(1);
-    });*/
+    });
 });

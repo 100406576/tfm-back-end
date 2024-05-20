@@ -17,8 +17,17 @@ const createOperation = async function (operation) {
     return await Operation.create(operation);
 }
 
+const deleteOperation = async function (operation_id) {
+    return await Operation.destroy({
+        where: {
+            operation_id: operation_id
+        }
+    });
+}
+
 module.exports = {
     readOperationsByPropertyId,
     readOperation,
-    createOperation
+    createOperation,
+    deleteOperation
 }

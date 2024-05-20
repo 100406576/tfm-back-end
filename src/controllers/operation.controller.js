@@ -9,15 +9,7 @@ const ForbiddenError = require('../errors/forbidden.error.js');
 const readOperationsOfProperty = async (req, res, next) => {
     try {
         const property_id = req.params.property_id;
-        const property = await propertyService.readProperty(property_id);
-
-        if (!property) {
-            throw new NotFoundError('Property not found');
-        }
-
-        if (property.user_id !== req.user.user_id) {
-            throw new ForbiddenError('You are not allowed to see the operations of this property');
-        }
+        await validatePropertyOwnership(property_id, req.user.user_id);
 
         const operations = await operationService.readOperationsByPropertyId(property_id);
 
@@ -36,11 +28,7 @@ const readOperation = async (req, res, next) => {
             throw new NotFoundError('Operation not found');
         }
 
-        const property = await propertyService.readProperty(operation.property_id);
-
-        if (property.user_id !== req.user.user_id) {
-            throw new ForbiddenError('You are not allowed to see the operation');
-        }
+        await validatePropertyOwnership(operation.property_id, req.user.user_id);
 
         res.status(200).json(operation);
     } catch (error) {
@@ -56,15 +44,7 @@ const createOperation = async (req, res, next) => {
             throw new ValidationError('property_id is required');
         }
 
-        const property = await propertyService.readProperty(body.property_id);
-
-        if (!property) {
-            throw new NotFoundError('Property not found');
-        }
-
-        if (property.user_id !== req.user.user_id) {
-            throw new ForbiddenError('You are not allowed to create operations for this property');
-        }
+        await validatePropertyOwnership(body.property_id, req.user.user_id);
 
         const operation = await operationService.createOperation(body);
         res.status(201).json(operation);
@@ -73,8 +53,41 @@ const createOperation = async (req, res, next) => {
     }
 }
 
+const deleteOperation = async (req, res, next) => {
+    try {
+        const operation_id = req.params.operation_id;
+        const operation = await operationService.readOperation(operation_id);
+
+        if (!operation) {
+            throw new NotFoundError('Operation not found');
+        }
+
+        await validatePropertyOwnership(operation.property_id, req.user.user_id);
+
+        await operationService.deleteOperation(operation_id);
+        res.status(200).send({ message: 'Operation deleted' });
+    } catch (error) {
+        next(error);
+    }
+}
+
+const validatePropertyOwnership = async (property_id, user_id) => {
+    const property = await propertyService.readProperty(property_id);
+
+    if (!property) {
+        throw new NotFoundError('Property not found');
+    }
+
+    if (property.user_id !== user_id) {
+        throw new ForbiddenError('You are not allowed to perform this operation on this property');
+    }
+
+    return property;
+}
+
 module.exports = {
     readOperationsOfProperty,
     readOperation,
-    createOperation
+    createOperation,
+    deleteOperation
 }
