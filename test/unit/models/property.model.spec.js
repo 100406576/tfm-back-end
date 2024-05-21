@@ -92,12 +92,17 @@ describe('Property Model', () => {
         }
     });
 
-    /*test('Update property', async () => {
-        const dataProperty = { propertyName: 'Updated Property Name' };
+    test('Update property', async () => {
+        const dataProperty = {
+        propertyName: 'Test Property Updated',
+        address: '123 Test St',
+        cadastralReference: '1234567890',
+        user_id: '1',
+    };
         const property_id = '1';
         const affectedRows = await PropertyMock.update(dataProperty, { where: { property_id: property_id } });
         expect(affectedRows[0]).toBe(1);
-    });*/
+    });
     
     test('Delete property', async () => {
         const deletedProperty = await PropertyMock.destroy({ where: { property_id: '1' } });

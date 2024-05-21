@@ -91,6 +91,12 @@ describe('Operation Model', () => {
         }
     });
 
+    test('Update operation', async () => {
+        const mockOperationUpdate = { operation_id: '2', description: 'Test Description 3', date: new Date(), type: 'expense', value: -200.00, property_id: '2' };
+        const updatedOperation = await OperationMock.update(mockOperationUpdate, { where: { operation_id: '1' } });
+        expect(updatedOperation).toEqual([1]);
+    });
+
     test('Delete operation', async () => {
         const deletedOperation = await OperationMock.destroy({ where: { operation_id: '1' } });
         expect(deletedOperation).toBe(1);

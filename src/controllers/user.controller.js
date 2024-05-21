@@ -1,6 +1,4 @@
 const userService = require("../services/user.service.js");
-const sequelize = require('sequelize')
-const bcryptjs = require('bcryptjs');
 const NotFoundError = require('../errors/notFound.error.js')
 const ConflictError = require('../errors/conflict.error.js');
 const AuthorizationError = require('../errors/authorization.error.js');

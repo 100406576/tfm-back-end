@@ -104,6 +104,7 @@ describe('Operation Controller', () => {
     });
 
     test('Create operation KO - Validation error', async () => {
+        const mockOperation = { id: 1, description: "Mensualidad abril 2024", date: new Date().toISOString(), type: 'income', value: 900.00};
         try {
             await request(app)
                 .post('/operations')
@@ -135,6 +136,48 @@ describe('Operation Controller', () => {
         try {
             await request(app)
                 .post('/operations')
+                .send(mockOperation);
+        } catch (error) {
+            expect(error).toBeInstanceOf(ForbiddenError);
+            expect(error.message).toStrictEqual('You are not allowed to perform this operation on this property');
+        }
+    });
+
+    test('Update operation OK', async () => {
+        const mockOperationUpdate = { description: "Mensualidad mayo 2024", date: new Date().toISOString(), type: 'income', value: 900.00, property_id: 1 };
+
+        operationService.readOperation.mockResolvedValue(mockOperation);
+        propertyService.readProperty.mockResolvedValue({ property_id: 1, user_id: 1 });
+        operationService.updateOperation.mockResolvedValue(mockOperationUpdate);
+
+        const res = await request(app)
+            .put('/operations/1')
+            .send(mockOperationUpdate);
+
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toEqual(mockOperationUpdate);
+    });
+
+    test('Update operation KO - Operation not found', async () => {
+        operationService.readOperation.mockResolvedValue(null);
+
+        try {
+            await request(app)
+                .put('/operations/999')
+                .send(mockOperation);
+        } catch (error) {
+            expect(error).toBeInstanceOf(NotFoundError);
+            expect(error.message).toStrictEqual('Operation not found');
+        }
+    });
+
+    test('Update operation KO - Forbidden', async () => {
+        operationService.readOperation.mockResolvedValue(mockOperation);
+        propertyService.readProperty.mockResolvedValue({ property_id: 1, user_id: 2 });
+
+        try {
+            await request(app)
+                .put('/operations/1')
                 .send(mockOperation);
         } catch (error) {
             expect(error).toBeInstanceOf(ForbiddenError);

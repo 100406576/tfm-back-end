@@ -53,6 +53,25 @@ const createOperation = async (req, res, next) => {
     }
 }
 
+const updateOperation = async (req, res, next) => {
+    try {
+        const operation_id = req.params.operation_id;
+        const operation = await operationService.readOperation(operation_id);
+
+        if (!operation) {
+            throw new NotFoundError('Operation not found');
+        }
+
+        await validatePropertyOwnership(operation.property_id, req.user.user_id);
+
+        const body = req.body;
+        const updatedOperation = await operationService.updateOperation(operation_id, body);
+        res.status(200).json(updatedOperation);
+    } catch (error) {
+        next(error);
+    }
+}
+
 const deleteOperation = async (req, res, next) => {
     try {
         const operation_id = req.params.operation_id;
@@ -89,5 +108,6 @@ module.exports = {
     readOperationsOfProperty,
     readOperation,
     createOperation,
+    updateOperation,
     deleteOperation
 }

@@ -55,7 +55,7 @@ describe('User Model', () => {
     });
 
     test('Update user', async () => {
-        const dataUser = { name: 'updatedName' };
+        const dataUser = { username: 'testuser1', name: 'Noelia', lastName: 'perez', password: 'password', email: 'testuser1@example.com' };
         const username = 'testuser1';
         const affectedRows = await UserMock.update(dataUser, { where: { username: username } });
         expect(affectedRows[0]).toBe(1);

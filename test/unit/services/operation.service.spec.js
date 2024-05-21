@@ -6,11 +6,14 @@ jest.mock('../../../src/models/operation.model', () => {
         findAll: jest.fn(),
         findByPk: jest.fn(),
         create: jest.fn(),
+        update: jest.fn(),
         destroy: jest.fn()
     };
 });
 
 describe('Property Service', () => {
+    const operation = { id: 1, description: "Mensualidad abril 2024", date: new Date().toISOString(), type: 'income', value: 900.00, property_id: 1 }
+
     beforeEach(() => {
         Operation.findAll.mockClear();
         Operation.findByPk.mockClear();
@@ -18,7 +21,7 @@ describe('Property Service', () => {
 
     test('readOperationsByPropertyId', async () => {
         const property_id = 1;
-        const operations = [{ id: 1, description: "Mensualidad abril 2024", date: new Date().toISOString(), type: 'income', value: 900.00, property_id: 1 },
+        const operations = [operation,
         { id: 2, description: "Gas abril 2024", date: new Date().toISOString(), type: 'expense', value: -40.00, property_id: 1 }];
         Operation.findAll.mockResolvedValue(operations);
 
@@ -29,7 +32,6 @@ describe('Property Service', () => {
 
     test('readOperation', async () => {
         const operation_id = 1;
-        const operation = { id: 1, description: "Mensualidad abril 2024", date: new Date().toISOString(), type: 'income', value: 900.00, property_id: 1 };
         Operation.findByPk.mockResolvedValue(operation);
 
         const result = await operationService.readOperation(operation_id);
@@ -38,12 +40,23 @@ describe('Property Service', () => {
     });
 
     test('createOperation', async () => {
-        const operation = { id: 1, description: "Mensualidad abril 2024", date: new Date().toISOString(), type: 'income', value: 900.00, property_id: 1 }
         Operation.create.mockResolvedValue(operation);
 
         const result = await operationService.createOperation(operation);
         expect(result).toEqual(operation);
         expect(Operation.create).toHaveBeenCalledWith(operation);
+    });
+
+    test('updateOperation', async () => {
+        const operation_id = 1;
+        const operationUpdate = { id: 1, description: "Mensualidad abril 2024", date: new Date().toISOString(), type: 'expense', value: -900.00, property_id: 1 }
+        Operation.update.mockResolvedValue(1);
+        Operation.findByPk.mockResolvedValue(operationUpdate);
+
+        const result = await operationService.updateOperation(operation_id, operationUpdate);
+        expect(result).toEqual(operationUpdate);
+        expect(Operation.update).toHaveBeenCalledWith(operationUpdate, { where: { operation_id: operation_id } });
+        expect(Operation.findByPk).toHaveBeenCalledWith(operation_id);
     });
 
     test('deleteOperation', async () => {

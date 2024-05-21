@@ -70,6 +70,20 @@ describe("Operation integration test", () => {
     expect(res.body).toHaveProperty('error', 'property_id is required');
   });
 
+  test("Update operation OK", async () => {
+    const mockOperation = { description: "Mensualidad mayo 2024", date: new Date().toISOString(), type: 'income', value: 900.00, property_id: propertyId };
+    const res = await request(app).put(`/operations/${operationId}`).send(mockOperation);
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('description', 'Mensualidad mayo 2024');
+  });
+
+  test("Update operation KO - Operation not found", async () => {
+    const mockOperation = { description: "Mensualidad mayo 2024", date: new Date().toISOString(), type: 'income', value: 900.00, property_id: 999 };
+    const res = await request(app).put(`/operations/999`).send(mockOperation);
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('error', 'Operation not found');
+  });
+
   test("Read operations of property OK- One operation", async () => {
     const res = await request(app).get(`/operations/property/${propertyId}`).send();
     expect(res.statusCode).toBe(200);
