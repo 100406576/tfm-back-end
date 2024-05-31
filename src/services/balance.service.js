@@ -28,7 +28,16 @@ const calculateBalanceForInterval = async (property_id, dateRange, interval) => 
         }
     }
 
-    return new Balance(labels, incomeArray, expensesArray);
+    const balance = new Balance({
+        labels: labels,
+        income: incomeArray,
+        expenses: expensesArray,
+        property_id: property_id
+    });
+
+    await balance.save();
+
+    return balance;
 }
 
 const calculateBalanceInRange = async (property_id, startDate, endDate) => {

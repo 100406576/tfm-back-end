@@ -1,13 +1,47 @@
-class Balance {
-    labels = [];
-    income = [];
-    expenses = [];
+const { Model, DataTypes } = require("sequelize");
+const sequelize = require("./index.js");
 
-    constructor(labels, income, expenses) {
-        this.labels = labels;
-        this.income = income;
-        this.expenses = expenses;
+class Balance extends Model {}
+
+Balance.init(
+    {
+        balance_id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true,
+        },
+        labels: {
+            type: DataTypes.STRING,
+            get() {
+                return JSON.parse(this.getDataValue('labels'));
+            },
+            set(value) {
+                this.setDataValue('labels', JSON.stringify(value));
+            },
+        },
+        income: {
+            type: DataTypes.STRING,
+            get() {
+                return JSON.parse(this.getDataValue('income'));
+            },
+            set(value) {
+                this.setDataValue('income', JSON.stringify(value));
+            },
+        },
+        expenses: {
+            type: DataTypes.STRING,
+            get() {
+                return JSON.parse(this.getDataValue('expenses'));
+            },
+            set(value) {
+                this.setDataValue('expenses', JSON.stringify(value));
+            },
+        },
+    },
+    {
+        sequelize,
+        modelName: "Balance"
     }
-}
+);
 
 module.exports = Balance;

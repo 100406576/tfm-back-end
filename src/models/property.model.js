@@ -4,6 +4,7 @@ const House = require("./house.model");
 const Flat = require("./flat.model");
 const Garage = require("./garage.model");
 const Operation = require("./operation.model.js");
+const Balance = require("./balance.model.js");
 
 class Property extends Model {}
 
@@ -55,5 +56,6 @@ Property.hasOne(House,  { foreignKey: 'property_id', onDelete: 'CASCADE', as : '
 Property.hasOne(Flat, { foreignKey: 'property_id', onDelete: 'CASCADE', as : 'flatDetails'});
 Property.hasOne(Garage, { foreignKey: 'property_id', onDelete: 'CASCADE', as : 'garageDetails'});
 Property.hasMany(Operation, { foreignKey: 'property_id', onDelete: 'CASCADE', as : 'operations'});
+Property.hasMany(Balance, { foreignKey: 'property_id', onDelete: 'CASCADE', as : 'balances'});
 
 module.exports = Property;
