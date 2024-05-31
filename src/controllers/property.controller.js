@@ -1,7 +1,4 @@
-const { ValidationError } = require('sequelize');
 const propertyService = require('../services/property.service.js');
-const NotFoundError = require('../errors/notFound.error.js');
-const ForbiddenError = require('../errors/forbidden.error.js');
 
 const readPropertiesOfUser = async (req, res, next) => {
     try {
@@ -18,7 +15,7 @@ const readPropertiesOfUser = async (req, res, next) => {
 const readProperty = async (req, res, next) => {
     try {
         const property_id = req.params.property_id;
-        await validatePropertyOwnership(property_id, req.user.user_id);
+        await propertyService.validatePropertyOwnership(property_id, req.user.user_id);
 
         const property = await propertyService.readProperty(property_id);
         res.status(200).json(property);
@@ -43,7 +40,7 @@ const createProperty = async (req, res, next) => {
 const editProperty = async (req, res, next) => {
     try {
         const property_id = req.params.property_id;
-        await validatePropertyOwnership(property_id, req.user.user_id);
+        await propertyService.validatePropertyOwnership(property_id, req.user.user_id);
 
         const updatedProperty = await propertyService.updateProperty(property_id, req.body);
 
@@ -56,7 +53,7 @@ const editProperty = async (req, res, next) => {
 const deleteProperty = async (req, res, next) => {
     try {
         const property_id = req.params.property_id;
-        await validatePropertyOwnership(property_id, req.user.user_id);
+        await propertyService.validatePropertyOwnership(property_id, req.user.user_id);
 
         await propertyService.deleteProperty(property_id);
 
@@ -65,20 +62,6 @@ const deleteProperty = async (req, res, next) => {
         next(error);
     }
 };
-
-const validatePropertyOwnership = async (property_id, user_id) => {
-    const property = await propertyService.readProperty(property_id);
-
-    if (!property) {
-        throw new NotFoundError('Property not found');
-    }
-
-    if (property.user_id !== user_id) {
-        throw new ForbiddenError('You are not allowed to perform this operation on this property');
-    }
-
-    return property;
-}
 
 module.exports = {
     readPropertiesOfUser,

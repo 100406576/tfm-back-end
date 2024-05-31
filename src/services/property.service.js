@@ -2,6 +2,8 @@ const Property = require('../models/property.model');
 const House = require('../models/house.model');
 const Flat = require('../models/flat.model');
 const Garage = require('../models/garage.model');
+const NotFoundError = require('../errors/notFound.error.js');
+const ForbiddenError = require('../errors/forbidden.error.js');
 
 const cleanPropertyDetails = (property) => {
     if (property === null) {
@@ -126,10 +128,23 @@ const deleteProperty = async function (property_id) {
     });
 }
 
+const validatePropertyOwnership = async (property_id, user_id) => {
+    const property = await readProperty(property_id);
+
+    if (!property) {
+        throw new NotFoundError('Property not found');
+    }
+
+    if (property.user_id !== user_id) {
+        throw new ForbiddenError('You are not allowed to perform this operation on this property');
+    }
+}
+
 module.exports = {
     readPropertiesByUserId,
     readProperty,
     createProperty,
     updateProperty,
-    deleteProperty
+    deleteProperty,
+    validatePropertyOwnership,
 };

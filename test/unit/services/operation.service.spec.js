@@ -22,7 +22,7 @@ describe('Property Service', () => {
     test('readOperationsByPropertyId', async () => {
         const property_id = 1;
         const operations = [operation,
-        { id: 2, description: "Gas abril 2024", date: new Date().toISOString(), type: 'expense', value: -40.00, property_id: 1 }];
+        { id: 2, description: "Gas abril 2024", date: new Date().toISOString(), type: 'expense', value: 40.00, property_id: 1 }];
         Operation.findAll.mockResolvedValue(operations);
 
         const result = await operationService.readOperationsByPropertyId(property_id);
@@ -49,7 +49,7 @@ describe('Property Service', () => {
 
     test('updateOperation', async () => {
         const operation_id = 1;
-        const operationUpdate = { id: 1, description: "Mensualidad abril 2024", date: new Date().toISOString(), type: 'expense', value: -900.00, property_id: 1 }
+        const operationUpdate = { id: 1, description: "Mensualidad abril 2024", date: new Date().toISOString(), type: 'expense', value: 900.00, property_id: 1 }
         Operation.update.mockResolvedValue(1);
         Operation.findByPk.mockResolvedValue(operationUpdate);
 

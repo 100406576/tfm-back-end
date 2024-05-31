@@ -31,6 +31,13 @@ Operation.init(
         value: {
             type: DataTypes.DECIMAL(10, 2),
             allowNull: false,
+            validate: {
+                isPositive(value) {
+                    if (parseFloat(value) <= 0) {
+                        throw new Error('The value must be positive');
+                    }
+                }
+            }
         },
         property_id: {
             type: DataTypes.UUID,

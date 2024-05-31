@@ -1,10 +1,21 @@
 const Operation = require('../models/operation.model');
-
+const { Op } = require("sequelize");
 
 const readOperationsByPropertyId = async function (property_id) {
     return await Operation.findAll({
         where: {
             property_id: property_id
+        }
+    });
+}
+
+const readOperationsByPropertyIdAndDateRange = async function (property_id, startDate, endDate) {
+    return await Operation.findAll({
+        where: {
+            property_id: property_id,
+            date: {
+                [Op.between]: [new Date(startDate), new Date(endDate)]
+            }
         }
     });
 }
@@ -37,6 +48,7 @@ const deleteOperation = async function (operation_id) {
 
 module.exports = {
     readOperationsByPropertyId,
+    readOperationsByPropertyIdAndDateRange,
     readOperation,
     createOperation,
     deleteOperation,

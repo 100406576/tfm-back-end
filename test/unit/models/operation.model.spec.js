@@ -1,5 +1,4 @@
 const SequelizeMock = require('sequelize-mock');
-const Operation = require('../../../src/models/operation.model.js');
 
 const DBConnectionMock = new SequelizeMock();
 
@@ -28,7 +27,7 @@ OperationMock.$queryInterface.$useHandler(function(query, queryOptions, done) {
                 description: 'Test Description 2',
                 date: new Date(),
                 type: 'expense',
-                value: -200.00,
+                value: 200.00,
                 property_id: '2',
             }),
         ];
@@ -77,7 +76,7 @@ describe('Operation Model', () => {
     });
 
     test('Create operation', async () => {
-        const mockOperation = { operation_id: '2', description: 'Test Description 2', date: new Date(), type: 'expense', value: -200.00, property_id: '2' };
+        const mockOperation = { operation_id: '2', description: 'Test Description 2', date: new Date(), type: 'expense', value: 200.00, property_id: '2' };
         const createdOperation = await OperationMock.create(mockOperation);
         expect(createdOperation.operation_id).toBe('2');
     });   
@@ -92,7 +91,7 @@ describe('Operation Model', () => {
     });
 
     test('Update operation', async () => {
-        const mockOperationUpdate = { operation_id: '2', description: 'Test Description 3', date: new Date(), type: 'expense', value: -200.00, property_id: '2' };
+        const mockOperationUpdate = { operation_id: '2', description: 'Test Description 3', date: new Date(), type: 'expense', value: 200.00, property_id: '2' };
         const updatedOperation = await OperationMock.update(mockOperationUpdate, { where: { operation_id: '1' } });
         expect(updatedOperation).toEqual([1]);
     });

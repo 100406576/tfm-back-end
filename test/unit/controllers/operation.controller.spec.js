@@ -25,7 +25,7 @@ describe('Operation Controller', () => {
 
     test('Read operations of property OK', async () => {
         const mockOperations = [mockOperation,
-        { id: 2, description: "Gas abril 2024", date: new Date().toISOString(), type: 'expense', value: -40.00, property_id: 1 }];
+        { id: 2, description: "Gas abril 2024", date: new Date().toISOString(), type: 'expense', value: 40.00, property_id: 1 }];
 
         propertyService.readProperty.mockResolvedValue({ property_id: 1, user_id: 1 });
         operationService.readOperationsByPropertyId.mockResolvedValue(mockOperations);

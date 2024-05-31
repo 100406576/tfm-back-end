@@ -1,7 +1,7 @@
 const { ValidationError } = require('sequelize');
 
 const errorHandler = (err, req, res, next) => {
-    //console.log(err);
+    console.log(err);
     let statusCode = err.status;
     if (err instanceof ValidationError) {
         statusCode = 400;
