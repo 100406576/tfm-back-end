@@ -1,5 +1,6 @@
 const operationService = require('../../../src/services/operation.service');
 const Operation = require('../../../src/models/operation.model');
+const { Op } = require("sequelize");
 
 jest.mock('../../../src/models/operation.model', () => {
     return {
@@ -28,6 +29,26 @@ describe('Property Service', () => {
         const result = await operationService.readOperationsByPropertyId(property_id);
         expect(result).toEqual(operations);
         expect(Operation.findAll).toHaveBeenCalledWith({ where: { property_id: property_id } });
+    });
+
+    test('readOperationsByPropertyIdAndDateRange', async () => {
+        const property_id = 1;
+        const startDate = "2024-04-01";
+        const endDate = "2024-04-30";
+        const operations = [operation,
+        { id: 2, description: "Gas abril 2024", date: new Date().toISOString(), type: 'expense', value: 40.00, property_id: 1 }];
+        Operation.findAll.mockResolvedValue(operations);
+
+        const result = await operationService.readOperationsByPropertyIdAndDateRange(property_id, startDate, endDate);
+        expect(result).toEqual(operations);
+        expect(Operation.findAll).toHaveBeenCalledWith({
+            where: {
+                property_id: property_id,
+                date: {
+                    [Op.between]: [new Date(startDate), new Date(endDate)]
+                }
+            }
+        });
     });
 
     test('readOperation', async () => {

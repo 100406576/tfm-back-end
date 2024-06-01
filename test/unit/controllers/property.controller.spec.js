@@ -1,23 +1,16 @@
 const request = require('supertest');
 const { app } = require('../../../src/app.js');
-const userService = require('../../../src/services/user.service.js');
 const propertyService = require('../../../src/services/property.service.js');
 const NotFoundError = require('../../../src/errors/notFound.error.js');
 const ForbiddenError = require('../../../src/errors/forbidden.error.js');
 const authMiddleware = require('../../../src/middlewares/auth.middleware.js');
-const userValidationMiddleware = require('../../../src/middlewares/userValidation.middleware.js');
 const { ValidationError } = require('sequelize');
 
 const authMiddlewareMock = (req, res, next) => {
     req.user = { user_id: 1 };
     next();
 };
-const userValidationMiddlewareMock = (req, res, next) => {
-    next();
-};
 jest.mock('../../../src/middlewares/auth.middleware.js', () => authMiddlewareMock);
-jest.mock('../../../src/middlewares/userValidation.middleware.js', () => userValidationMiddlewareMock);
-jest.mock('../../../src/services/user.service.js');
 jest.mock('../../../src/services/property.service.js');
 
 describe('Property Controller', () => {
@@ -33,8 +26,20 @@ describe('Property Controller', () => {
         expect(res.body).toEqual(mockProperties);
     });
 
+    test('Read properties of user KO', async () => {
+        propertyService.readPropertiesByUserId.mockRejectedValue(new Error('Error'));
+        
+        try {
+            await request(app).get('/properties');
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toStrictEqual('Error');
+        }
+    });
+
     test('Read property OK', async () => {
         const mockProperty = { property_id: 1, user_id: 1, name: 'Property 1', address: 'calle italia 2', cadastralReference: '1234', houseDetails: { property_id: 1, numberOfRooms: 2, hasGarden: true } };
+        propertyService.validatePropertyOwnership.mockResolvedValue();
         propertyService.readProperty.mockResolvedValue(mockProperty);
 
         const res = await request(app).get('/properties/1');
@@ -44,7 +49,7 @@ describe('Property Controller', () => {
     });
 
     test('Read property KO - Property not found', async () => {
-        propertyService.readProperty.mockResolvedValue(null);
+        propertyService.validatePropertyOwnership.mockResolvedValue(new NotFoundError('Property not found'));
 
         try {
             await request(app).get('/properties/999');
@@ -55,8 +60,7 @@ describe('Property Controller', () => {
     });
 
     test('Read property KO - Forbidden', async () => {
-        const mockProperty = { property_id: 1, user_id: 2, name: 'Property 1', address: 'calle italia 2', cadastralReference: '1234', houseDetails: { property_id: 1, numberOfRooms: 2, hasGarden: true } };
-        propertyService.readProperty.mockResolvedValue(mockProperty);
+        propertyService.validatePropertyOwnership.mockRejectedValue(new ForbiddenError('You are not allowed to perform this operation on this property'));
 
         try {
             await request(app).get('/properties/1').set('user', { user_id: 2 });
@@ -67,10 +71,7 @@ describe('Property Controller', () => {
     });
 
     test('Create property OK', async () => {
-        const mockUser = { username: 'testuser1', user_id: 1 };
         const mockProperty = { property_id: 1, user_id: 1, name: 'Property 1', address: 'calle italia 2', cadastralReference: '1234', houseDetails: { property_id: 1, numberOfRooms: 2, hasGarden: true } };
-        userService.readUser.mockResolvedValue(mockUser);
-        propertyService.readProperty.mockResolvedValue(null);
         propertyService.createProperty.mockResolvedValue(mockProperty);
 
         const res = await request(app).post('/properties').send(mockProperty);
@@ -94,10 +95,8 @@ describe('Property Controller', () => {
     test('Edit property OK', async () => {
         const mockUser = { username: 'testuser1', user_id: 1 };
         const mockProperty = { user_id: 1, name: 'Property 2', address: 'calle Hungría 2', cadastralReference: '1234', houseDetails: { property_id: 1, numberOfRooms: 2, hasGarden: false } };
-        userService.readUser.mockResolvedValue(mockUser);
-        propertyService.readProperty.mockResolvedValue(null);
+        propertyService.validatePropertyOwnership.mockResolvedValue();
         propertyService.updateProperty.mockResolvedValue(mockProperty);
-        propertyService.readProperty.mockResolvedValue(mockProperty);
 
         const res = await request(app).put('/properties/1').send(mockProperty);
 
@@ -106,7 +105,7 @@ describe('Property Controller', () => {
     });
 
     test('Edit property KO - Property not found', async () => {
-        propertyService.readProperty.mockResolvedValue(null);
+        propertyService.validatePropertyOwnership.mockResolvedValue(new NotFoundError('Property not found'));
 
         try {
             await request(app).put('/properties/999').send({});
@@ -117,8 +116,7 @@ describe('Property Controller', () => {
     });
 
     test('Edit property KO - Forbidden', async () => {
-        const mockProperty = { property_id: 1, user_id: 2, name: 'Property 1', address: 'calle italia 2', cadastralReference: '1234', houseDetails: { property_id: 1, numberOfRooms: 2, hasGarden: true } };
-        propertyService.readProperty.mockResolvedValue(mockProperty);
+        propertyService.validatePropertyOwnership.mockRejectedValue(new ForbiddenError('You are not allowed to perform this operation on this property'));
 
         try {
             await request(app).put('/properties/1').set('user', { user_id: 2 });
@@ -129,8 +127,7 @@ describe('Property Controller', () => {
     });
 
     test('Delete property KO - Forbidden', async () => {
-        const mockProperty = { property_id: 1, user_id: 2, name: 'Property 1', address: 'calle italia 2', cadastralReference: '1234', houseDetails: { property_id: 1, numberOfRooms: 2, hasGarden: true } };
-        propertyService.readProperty.mockResolvedValue(mockProperty);
+        propertyService.validatePropertyOwnership.mockRejectedValue(new ForbiddenError('You are not allowed to perform this operation on this property'));
 
         try {
             await request(app).delete('/properties/1').set('user', { user_id: 2 });
@@ -141,7 +138,7 @@ describe('Property Controller', () => {
     });
 
     test('Delete property OK', async () => {
-        propertyService.readProperty.mockResolvedValue({ property_id: 1, user_id: 1 });
+        propertyService.validatePropertyOwnership.mockResolvedValue();
         propertyService.deleteProperty.mockResolvedValue(1);
 
         const res = await request(app).delete('/properties/1');

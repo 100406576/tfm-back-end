@@ -93,6 +93,7 @@ describe('Property Service', () => {
         });
     });
 
+
     test('Create property House', async () => {
         const mockProperty = {
             propertyName: "Casa 1",
@@ -331,5 +332,49 @@ describe('Property Service', () => {
                 property_id: '1'
             }
         });
+    });
+
+    test('Validate property ownership', async () => {
+        const mockProperty = {
+            property_id: '1', 
+            propertyName: 'Test Property 1', 
+            user_id: '1', 
+            houseDetails: { 
+                property_id: '1', 
+                numberOfRooms: 2, 
+                hasGarden: true 
+            }, 
+            toJSON: function () {
+                return this;
+            }
+        };
+        Property.findByPk.mockResolvedValueOnce(mockProperty);
+    
+        await expect(propertyService.validatePropertyOwnership('1', '1')).resolves.toBeUndefined();
+    });
+    
+    test('Validate property ownership - Property not found', async () => {
+        Property.findByPk.mockResolvedValueOnce(null);
+    
+        await expect(propertyService.validatePropertyOwnership('1', '1')).rejects.toThrow('Property not found');
+    });
+    
+    test('Validate property ownership - User is not the owner', async () => {
+        const mockProperty = {
+            property_id: '1', 
+            propertyName: 'Test Property 1', 
+            user_id: '2', 
+            houseDetails: { 
+                property_id: '1', 
+                numberOfRooms: 2, 
+                hasGarden: true 
+            }, 
+            toJSON: function () {
+                return this;
+            }
+        };
+        Property.findByPk.mockResolvedValueOnce(mockProperty);
+    
+        await expect(propertyService.validatePropertyOwnership('1', '1')).rejects.toThrow('You are not allowed to perform this operation on this property');
     });
 });
