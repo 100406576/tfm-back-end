@@ -57,5 +57,7 @@ Property.hasOne(Flat, { foreignKey: 'property_id', onDelete: 'CASCADE', as : 'fl
 Property.hasOne(Garage, { foreignKey: 'property_id', onDelete: 'CASCADE', as : 'garageDetails'});
 Property.hasMany(Operation, { foreignKey: 'property_id', onDelete: 'CASCADE', as : 'operations'});
 Property.hasMany(Balance, { foreignKey: 'property_id', onDelete: 'CASCADE', as : 'balances'});
+Operation.belongsTo(Property, { foreignKey: 'property_id', as : 'property'});
+Balance.belongsTo(Property, { foreignKey: 'property_id', as : 'property'});
 
 module.exports = Property;

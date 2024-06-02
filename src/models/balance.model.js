@@ -37,6 +37,14 @@ Balance.init(
                 this.setDataValue('expenses', JSON.stringify(value));
             },
         },
+        property_id: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+              model: 'Properties',
+              key: 'property_id',
+            }
+        },
     },
     {
         sequelize,

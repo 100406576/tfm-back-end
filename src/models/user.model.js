@@ -1,6 +1,7 @@
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("./index.js");
 const Property = require("./property.model");
+const Document = require("./document.model");
 
 class User extends Model {}
 
@@ -84,5 +85,7 @@ User.init(
 
 User.hasMany(Property, { foreignKey: "user_id", onDelete: 'CASCADE' });
 Property.belongsTo(User, { foreignKey: "user_id" });
+User.hasMany(Document, { foreignKey: "user_id", onDelete: 'CASCADE' });
+Document.belongsTo(User, { foreignKey: "user_id" });
 
 module.exports = User;
