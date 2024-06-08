@@ -23,7 +23,7 @@ describe('Balance Controller', () => {
                 startDate: "2024-04-01",
                 endDate: "2024-04-30"
             },
-            timeInterval: "1"
+            timeInterval: 1
         }
 
         const mockBalance = {
@@ -60,7 +60,7 @@ describe('Balance Controller', () => {
                     startDate: "2024-04-01",
                     endDate: "2024-04-30"
                 },
-                timeInterval: "-1"
+                timeInterval: -1
             });
         } catch (error) {
             expect(error).toBeInstanceOf(ValidationError);
@@ -78,7 +78,7 @@ describe('Balance Controller', () => {
                     startDate: "2024-04-01",
                     endDate: "2024-04-30"
                 },
-                timeInterval: "1"
+                timeInterval: 1
             });
         } catch (error) {
             expect(error).toBeInstanceOf(ForbiddenError);
@@ -96,7 +96,7 @@ describe('Balance Controller', () => {
                     startDate: "2024-04-01",
                     endDate: "2024-04-30"
                 },
-                timeInterval: "1"
+                timeInterval: 1
             });
         } catch (error) {
             expect(error).toBeInstanceOf(NotFoundError);

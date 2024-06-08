@@ -4,6 +4,7 @@ const Flat = require('../models/flat.model');
 const Garage = require('../models/garage.model');
 const NotFoundError = require('../errors/notFound.error.js');
 const ForbiddenError = require('../errors/forbidden.error.js');
+const { readDocumentByFileId } = require('./document.service.js');
 
 const cleanPropertyDetails = (property) => {
     if (property === null) {

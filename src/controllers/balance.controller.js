@@ -3,17 +3,13 @@ const { ValidationError } = require('sequelize');
 const propertyService = require('../services/property.service');
 
 const validateRequest = (property_id, dateRange, timeInterval, req) => {
-    if (!property_id || !dateRange || !timeInterval || !dateRange.startDate || !dateRange.endDate) {
+    if (!property_id || !dateRange || timeInterval === undefined || !dateRange.startDate || !dateRange.endDate) {
         throw new ValidationError('Missing required fields');
     }
 
-    let interval = parseInt(timeInterval);
-    if (isNaN(interval) || interval < 0) {
+    if (typeof timeInterval !== 'number' || timeInterval < 0) {
         throw new ValidationError('Invalid time interval');
     }
-    
-
-    return interval;
 }
 
 const createBalance = async (req, res, next) => {
@@ -25,7 +21,7 @@ const createBalance = async (req, res, next) => {
         dateRange.startDate = new Date(dateRange.startDate);
         dateRange.endDate = new Date(dateRange.endDate);
 
-        const balance = await balanceService.calculateBalanceForInterval(property_id, dateRange, interval);
+        const balance = await balanceService.calculateBalanceForInterval(property_id, dateRange, timeInterval);
 
         res.status(201).json(balance);
     } catch (error) {

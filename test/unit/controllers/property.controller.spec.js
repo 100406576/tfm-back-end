@@ -82,7 +82,7 @@ describe('Property Controller', () => {
 
     test('Create property KO - Bad request', async () => {
         const mockProperty = { propertyName: 'Property 1', address: 'calle italia 2'};
-        propertyService.createProperty.mockResolvedValue(new ValidationError('notNull Violation: Property.cadastralReference cannot be null'));
+        propertyService.createProperty.mockRejectedValue(new ValidationError('notNull Violation: Property.cadastralReference cannot be null'));
 
         try {
             await request(app).post('/properties').send(mockProperty);
@@ -105,7 +105,7 @@ describe('Property Controller', () => {
     });
 
     test('Edit property KO - Property not found', async () => {
-        propertyService.validatePropertyOwnership.mockResolvedValue(new NotFoundError('Property not found'));
+        propertyService.validatePropertyOwnership.mockRejectedValue(new NotFoundError('Property not found'));
 
         try {
             await request(app).put('/properties/999').send({});

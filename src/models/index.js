@@ -4,7 +4,8 @@ const { DB_HOST, DB_DATABASE, DB_DIALECT, DB_PASSWORD, DB_USERNAME, DB_PORT } = 
 const sequelize = new Sequelize(DB_DATABASE, DB_USERNAME, DB_PASSWORD, {
     host: DB_HOST,
     dialect: DB_DIALECT,
-    port: DB_PORT
+    port: DB_PORT,
+    logging: process.env.NODE_ENV === 'test' ? false : console.log
 });
 
 module.exports = sequelize;

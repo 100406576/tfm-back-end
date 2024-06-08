@@ -68,6 +68,21 @@ describe('User Controller', () => {
         }
     });
 
+    test('Create user KO - No password', async () => {
+        const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', email: 'testuser1@example.com' };
+        userService.readUser.mockResolvedValue(null);
+    
+        try {
+            await request(app)
+                .post('/users')
+                .set('Content-Type', 'application/json')
+                .send(mockUser);
+        } catch (error) {
+            expect(error).toBeInstanceOf(ValidationError);
+            expect(error.message).toStrictEqual('Password is not defined');
+        }
+    });
+
     test('Create user KO - Bad Request no password', async () => {
         const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', email: 'testuser1@example.com' };
         userService.readUser.mockResolvedValue(mockUser);
@@ -86,9 +101,7 @@ describe('User Controller', () => {
     test('Create user KO - Bad Request wrong email format', async () => {
         const mockUser = { username: 'testuser1', name: 'paco', lastName: 'perez', password: "password", email: 'testuser1' };
         userService.readUser.mockResolvedValue(null);
-        userService.createUser.mockImplementation(() => {
-            throw new ValidationError();
-        });
+        userService.createUser.mockRejectedValue(new ValidationError('Validation error: Invalid email format'));
 
         try {
             await request(app)
@@ -97,7 +110,7 @@ describe('User Controller', () => {
                 .send(mockUser);
         } catch (error) {
             expect(error).toBeInstanceOf(ValidationError);
-            expect(error.message).toStrictEqual('Password is not defined');
+            expect(error.message).toStrictEqual('Validation error: Invalid email format');
         }
     });
 

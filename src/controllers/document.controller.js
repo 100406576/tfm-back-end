@@ -2,6 +2,7 @@ const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
 const documentService = require('../services/document.service');
 const { ValidationError } = require('sequelize');
+const ConflictError = require('../errors/conflict.error');
 
 const uploadDocument = async (req, res, next) => {
     upload.single('file')(req, res, async (err) => {
@@ -17,6 +18,11 @@ const uploadDocument = async (req, res, next) => {
                 throw new ValidationError('Unsupported file type');
             }
 
+            const document = await documentService.readDocumentByDocumentName(req.file.originalname);
+            if (document) {
+                throw new ConflictError('Document with this name already exists');
+            }
+
             await documentService.createDocument(req.file.originalname, req.file.buffer, req.file.mimetype, req.user.user_id);
 
             res.status(200).send({ message: `Document "${req.file.originalname}" uploaded successfully` });
@@ -26,20 +32,23 @@ const uploadDocument = async (req, res, next) => {
     });
 };
 
-/*const getDocument = async (req, res, next) => {
+const readDocumentsOfUser = async (req, res, next) => {
     try {
-        // Busca el documento en la base de datos
-        const document = await Document.findByPk(req.params.document_id);
+        const documents = await documentService.readDocumentsByUserId(req.user.user_id);
+        res.status(200).send(documents);
+    } catch (error) {
+        next(error);
+    }
+};
 
-        // Si el documento no existe, envía un error 404
-        if (!document) {
-            return res.status(404).send({ message: 'Documento no encontrado.' });
-        }
+const readDocument = async (req, res, next) => {
+    try {
+        await documentService.validateDocumentOwnership(req.params.document_id, req.user.user_id);
 
-        // Establece el encabezado 'Content-Type' al tipo MIME del documento
+        const document = await documentService.readDocumentByDocumentId(req.params.document_id);
+
         res.setHeader('Content-Type', document.mimetype);
 
-        // Envía los datos del documento en el cuerpo de la respuesta
         res.send(document.data);
     } catch (error) {
         next(error);
@@ -48,24 +57,30 @@ const uploadDocument = async (req, res, next) => {
 
 const deleteDocument = async (req, res, next) => {
     try {
-        const documentId = req.params.document_id;
+        await documentService.validateDocumentOwnership(req.params.document_id, req.user.user_id);
 
-        const document = await Document.findByPk(documentId);
+        await documentService.deleteDocumentByDocumentId(req.params.document_id);
 
-        if (!document) {
-            return res.status(404).send({ message: 'Documento no encontrado.' });
-        }
-
-        await document.destroy();
-
-        res.status(200).send({ message: 'Documento eliminado con éxito.' });
+        res.status(200).send({ message: 'Document deleted successfully' });
     } catch (error) {
         next(error);
     }
-};*/
+}
+
+const deleteDocumentsOfUser = async (req, res, next) => {
+    try {
+        await documentService.deleteDocumentsByUserId(req.user.user_id);
+
+        res.status(200).send({ message: 'Documents deleted successfully' });
+    } catch (error) {
+        next(error);
+    }
+}
 
 module.exports = {
     uploadDocument,
-    //getDocument,
-    //deleteDocument
+    readDocumentsOfUser,
+    readDocument,
+    deleteDocument,
+    deleteDocumentsOfUser,
 }

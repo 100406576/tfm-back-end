@@ -11,7 +11,7 @@ Balance.init(
             primaryKey: true,
         },
         labels: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(1234), // reemplace 1234 con la longitud máxima que necesites
             get() {
                 return JSON.parse(this.getDataValue('labels'));
             },

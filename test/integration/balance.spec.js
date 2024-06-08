@@ -45,11 +45,11 @@ describe("Balance integration test", () => {
                 startDate: "2024-01-01",
                 endDate: "2024-01-31",
             },
-            timeInterval: "0"
+            timeInterval: 0
         }
         const res = await request(app).post("/balances").send(body);
         expect(res.statusCode).toBe(201);
-        console.log(res.body);
+        expect(res.body).toHaveProperty('balance_id');
     });
 
     test("Create Balance KO - Property not found", async () => {
@@ -59,7 +59,7 @@ describe("Balance integration test", () => {
                 startDate: "2024-01-01",
                 endDate: "2024-01-31",
             },
-            timeInterval: "0"
+            timeInterval: 0
         }
         const res = await request(app).post("/balances").send(body);
         expect(res.statusCode).toBe(404);
@@ -72,7 +72,7 @@ describe("Balance integration test", () => {
                 startDate: "2024-01-01",
                 endDate: "2024-01-31",
             },
-            timeInterval: "0"
+            timeInterval: 0
         }
         const res = await request(app).post("/balances").send(body);
         expect(res.statusCode).toBe(400);

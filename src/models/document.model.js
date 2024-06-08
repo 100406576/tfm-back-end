@@ -13,6 +13,7 @@ Document.init(
         documentName: {
             type: DataTypes.STRING,
             allowNull: false,
+            unique: true
         },
         data: {
             type: DataTypes.BLOB('long'),

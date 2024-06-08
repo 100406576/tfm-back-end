@@ -6,10 +6,10 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
-    "test": "cross-env NODE_ENV=test && jest  --detectOpenHandles",
+    "test": "cross-env NODE_ENV=test && jest  --detectOpenHandles --verbose --color",
     "test:coverage": "cross-env NODE_ENV=test && jest  --detectOpenHandles --testPathPattern=./test --coverage",
-    "test:unit": "cross-env NODE_ENV=test && jest  --detectOpenHandles --testPathPattern=./test/unit/",
-    "test:integration": "cross-env NODE_ENV=test && jest  --detectOpenHandles --testPathPattern=./test/integration/"
+    "test:unit": "cross-env NODE_ENV=test && jest  --detectOpenHandles --testPathPattern=./test/unit/ --verbose --color",
+    "test:integration": "cross-env NODE_ENV=test && jest  --detectOpenHandles --testPathPattern=./test/integration/ --verbose --color"
   },
   "keywords": [],
   "author": "Oliver Fernandez",

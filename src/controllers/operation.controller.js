@@ -2,8 +2,6 @@ const { ValidationError } = require('sequelize');
 const propertyService = require('../services/property.service.js');
 const operationService = require('../services/operation.service.js');
 const NotFoundError = require('../errors/notFound.error.js');
-const ForbiddenError = require('../errors/forbidden.error.js');
-
 
 const readOperationsOfProperty = async (req, res, next) => {
     try {
