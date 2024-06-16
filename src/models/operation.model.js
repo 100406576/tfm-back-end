@@ -45,7 +45,8 @@ Operation.init(
             references: {
               model: 'Properties',
               key: 'property_id',
-            }
+            },
+            onDelete: 'CASCADE',
         },
     },
     {

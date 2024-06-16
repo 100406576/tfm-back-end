@@ -12,20 +12,21 @@ const uploadDocument = async (req, res, next) => {
         }
 
         try {
-
             const allowedMimeTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png'];
             if (!allowedMimeTypes.includes(req.file.mimetype)) {
                 throw new ValidationError('Unsupported file type');
             }
 
-            const document = await documentService.readDocumentByDocumentName(req.file.originalname);
+            const documentName = Buffer.from(req.file.originalname, 'binary').toString('utf-8');
+
+            const document = await documentService.readDocumentByDocumentName(documentName);
             if (document) {
                 throw new ConflictError('Document with this name already exists');
             }
 
-            await documentService.createDocument(req.file.originalname, req.file.buffer, req.file.mimetype, req.user.user_id);
+            await documentService.createDocument(documentName, req.file.buffer, req.file.mimetype, req.user.user_id);
 
-            res.status(200).send({ message: `Document "${req.file.originalname}" uploaded successfully` });
+            res.status(200).send({ message: `Document "${documentName}" uploaded successfully` });
         } catch (error) {
             next(error);
         }

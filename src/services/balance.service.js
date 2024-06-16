@@ -56,5 +56,6 @@ const calculateBalanceInRange = async (property_id, startDate, endDate) => {
 }
 
 module.exports = {
-    calculateBalanceForInterval
+    calculateBalanceForInterval,
+    calculateBalanceInRange
 }

@@ -5,6 +5,7 @@ const Flat = require("./flat.model");
 const Garage = require("./garage.model");
 const Operation = require("./operation.model.js");
 const Balance = require("./balance.model.js");
+const TaxReturn = require("./taxReturn.model.js");
 
 class Property extends Model {}
 
@@ -45,6 +46,22 @@ Property.init(
               key: 'user_id',
             }
         },
+        cadastralValue: {
+            type: DataTypes.DECIMAL(10, 2),
+            allowNull: true,
+        },
+        constructionValue: {
+            type: DataTypes.DECIMAL(10, 2),
+            allowNull: true,
+        },
+        acquisitionValue: {
+            type: DataTypes.DECIMAL(10, 2),
+            allowNull: true,
+        },
+        acquisitionCosts: {
+            type: DataTypes.DECIMAL(10, 2),
+            allowNull: true,
+        }
     },
     {
         sequelize,
@@ -59,5 +76,6 @@ Property.hasMany(Operation, { foreignKey: 'property_id', onDelete: 'CASCADE', as
 Property.hasMany(Balance, { foreignKey: 'property_id', onDelete: 'CASCADE', as : 'balances'});
 Operation.belongsTo(Property, { foreignKey: 'property_id', as : 'property'});
 Balance.belongsTo(Property, { foreignKey: 'property_id', as : 'property'});
+TaxReturn.belongsTo(Property, { foreignKey: 'property_id', as : 'property'});
 
 module.exports = Property;

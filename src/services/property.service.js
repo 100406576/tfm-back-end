@@ -51,6 +51,10 @@ const createProperty = async function (property) {
         address: property.address,
         cadastralReference: property.cadastralReference,
         user_id: property.user_id,
+        cadastralValue: property.cadastralValue,
+        constructionValue: property.constructionValue,
+        acquisitionValue: property.acquisitionValue,
+        acquisitionCosts: property.acquisitionCosts,
     });
 
     if (property.houseDetails) {
@@ -82,6 +86,10 @@ const updateProperty = async function (property_id, property) {
         propertyName: property.propertyName,
         address: property.address,
         cadastralReference: property.cadastralReference,
+        cadastralValue: property.cadastralValue,
+        constructionValue: property.constructionValue,
+        acquisitionValue: property.acquisitionValue,
+        acquisitionCosts: property.acquisitionCosts,
     }, {
         where: {
             property_id: property_id
