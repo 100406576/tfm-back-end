@@ -6,7 +6,7 @@ jest.mock('../../../src/services/operation.service');
 jest.mock('../../../src/models/balance.model');
 
 describe('Balance Service', () => {
-    test('calculateBalanceForInterval- interlval 0', async () => {
+    test('calculateBalanceForInterval - interval 0', async () => {
         const mockPropertyId = '1';
         const mockDateRange = {
             startDate: new Date('2022-01-01'),
@@ -33,7 +33,7 @@ describe('Balance Service', () => {
         expect(balance.property_id).toBe(mockPropertyId);
     });
 
-    test('calculateBalanceForInterval with 1', async () => {
+    test('calculateBalanceForInterval with interval', async () => {
         const mockPropertyId = '1';
         const mockDateRange = {
             startDate: new Date('2022-01-01'),

@@ -1,6 +1,7 @@
 const TaxReturn = require('../models/taxReturn.model');
 const balanceService = require('./balance.service');
 const propertyService = require('./property.service');
+const { ValidationError } = require("sequelize");
 
 const calculateTaxReturn = async (body) => {
     const { income, expenses} = await balanceService.calculateBalanceInRange(body.property_id, new Date(body.fiscalYear, 0, 1), new Date(body.fiscalYear, 11, 31));
@@ -27,7 +28,7 @@ const calculateAmortization = async (property_id, numberOfDaysRented, previousYe
     const acquisitionCosts = Number(property.acquisitionCosts);
 
     if(!cadastralValue || !constructionValue || !acquisitionValue || !acquisitionCosts) {
-        throw new Error('Property data is incomplete');
+        throw new ValidationError('Property data is incomplete');
     }
 
     // Valor catastral excluido el valor del suelo (valor construcción) prorrateado por el nº de días que ha estado arrendado
@@ -51,5 +52,6 @@ const calculateAmortization = async (property_id, numberOfDaysRented, previousYe
 }
 
 module.exports = {
-    calculateTaxReturn
+    calculateTaxReturn,
+    calculateAmortization
 }

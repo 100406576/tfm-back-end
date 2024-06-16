@@ -83,8 +83,6 @@ describe("Document integration test", () => {
 
     test("Read document OK", async () => {
         const res = await request(app).get(`/documents/${documentId}`);
-        console.log(documentId);
-        console.log(res.body);
         expect(res.statusCode).toBe(200);
         expect(res.headers['content-type']).toBe('application/pdf');
         expect(res.body).toStrictEqual(Buffer.from('Test data'))
