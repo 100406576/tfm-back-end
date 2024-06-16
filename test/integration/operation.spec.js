@@ -1,9 +1,7 @@
 const request = require('supertest');
 const { app, syncDatabase } = require('../../src/app.js');
 const authMiddleware = require('../../src/middlewares/auth.middleware.js');
-const userService = require('../../src/services/user.service.js');
 const { PORT } = require('../../src/config/config.js');
-const { text } = require('express');
 
 const authMiddlewareMock = (req, res, next) => {
   req.user = {
@@ -37,7 +35,7 @@ describe("Operation integration test", () => {
     await new Promise(resolve => server.close(resolve));
   });
 
-  test("Read operations of property OK- No operations", async () => {
+  test("Read operations of property OK - No operations", async () => {
     const res = await request(app).get(`/operations/property/${propertyId}`).send();
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveLength(0);
@@ -79,7 +77,7 @@ describe("Operation integration test", () => {
     expect(res.body).toHaveProperty('error', 'Operation not found');
   });
 
-  test("Read operations of property OK- One operation", async () => {
+  test("Read operations of property OK - One operation", async () => {
     const res = await request(app).get(`/operations/property/${propertyId}`).send();
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveLength(1);
@@ -114,5 +112,4 @@ describe("Operation integration test", () => {
     expect(res.statusCode).toBe(404);
     expect(res.body).toHaveProperty('error', 'Operation not found');
   });
-
 });

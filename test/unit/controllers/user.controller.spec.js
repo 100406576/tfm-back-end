@@ -18,7 +18,6 @@ jest.mock('../../../src/middlewares/auth.middleware.js', () => authMiddlewareMoc
 jest.mock('../../../src/middlewares/userValidation.middleware.js', () => userValidationMiddlewareMock);
 
 describe('User Controller', () => {
-
     test('Read user OK', async () => {
         const mockUser = { username: 'testuser1', email: 'testuser1@example.com' };
         userService.readUser.mockResolvedValue(mockUser);

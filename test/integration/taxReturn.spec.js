@@ -13,7 +13,7 @@ const authMiddlewareMock = (req, res, next) => {
 };
 jest.mock('../../src/middlewares/auth.middleware.js', () => authMiddlewareMock);
 
-describe("TaxReturn integration test", () => {
+describe("Tax return integration test", () => {
     let server;
     const mockUser = { username: 'testIntegration', user_id: "1", name: 'paco', lastName: 'perez', password: "1234", email: 'testuser2@example.com' };
       const mockProperty = { propertyName: "Casa 1", address: "Calle inventada 2, Bajo A", cadastralReference: "1234", cadastralValue: 145000, constructionValue: 40000, acquisitionValue: 225000, acquisitionCosts: 25000, houseDetails: { numberOfRooms: 2, hasGarden: false } };
@@ -38,7 +38,7 @@ describe("TaxReturn integration test", () => {
       await new Promise(resolve => server.close(resolve));
     });
 
-    test("Calculate TaxReturn OK", async () => { 
+    test("Calculate tax return OK", async () => { 
         const body = {
             property_id: propertyId,
             fiscalYear: 2023,
@@ -56,7 +56,7 @@ describe("TaxReturn integration test", () => {
         expect(res.body.amortization).toBe(2368.97);
     });
 
-    test("Calculate TaxReturn KO - Property not found", async () => {
+    test("Calculate tax return KO - Property not found", async () => {
         const body = {
             property_id: 999,
             fiscalYear: 2023,
@@ -69,7 +69,7 @@ describe("TaxReturn integration test", () => {
         expect(res.body).toHaveProperty('error');
     });
 
-    test("Calculate TaxReturn KO - Missing required fields", async () => {
+    test("Calculate tax return KO - Missing required fields", async () => {
         const body = {
             fiscalYear: 2023,
             numberOfDaysRented: 365,
@@ -81,7 +81,7 @@ describe("TaxReturn integration test", () => {
         expect(res.body).toHaveProperty('error', 'property_id is required');
     });
 
-    test("Calculate TaxReturn KO - Invalid fiscal year", async () => {
+    test("Calculate tax return KO - Invalid fiscal year", async () => {
         const body = {
             property_id: propertyId,
             fiscalYear: 23,
@@ -94,7 +94,7 @@ describe("TaxReturn integration test", () => {
         expect(res.body).toHaveProperty('error', 'fiscalYear must be a valid year');
     });
 
-    test("Calculate TaxReturn KO - Invalid number of days rented", async () => {
+    test("Calculate tax return KO - Invalid number of days rented", async () => {
         const body = {
             property_id: propertyId,
             fiscalYear: 2023,

@@ -6,8 +6,7 @@ const calculateTaxReturn = async (req, res, next) => {
     try {
         const body = req.body;
 
-        validateBody(body);
-
+        validateRequest(body);
         await propertyService.validatePropertyOwnership(body.property_id, req.user.user_id);
 
         const taxReturn = await taxService.calculateTaxReturn(body);
@@ -18,7 +17,7 @@ const calculateTaxReturn = async (req, res, next) => {
     }
 }
 
-function validateBody(body) {
+function validateRequest(body) {
     const requiredFields = ['property_id', 'fiscalYear', 'numberOfDaysRented'];
 
     requiredFields.forEach(field => {

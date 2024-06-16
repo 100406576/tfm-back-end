@@ -1,7 +1,6 @@
 const request = require('supertest');
 const { app, syncDatabase } = require('../../src/app.js');
 const authMiddleware = require('../../src/middlewares/auth.middleware.js');
-const userService = require('../../src/services/user.service.js');
 const { PORT } = require('../../src/config/config.js');
 
 const authMiddlewareMock = (req, res, next) => {
@@ -32,7 +31,7 @@ describe("Property integration test", () => {
     await new Promise(resolve => server.close(resolve));
   });
 
-  test("Read properties of user OK- No properties", async () => {
+  test("Read properties of user OK - No properties", async () => {
     const res = await request(app).get(`/properties`).send();
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveLength(0);

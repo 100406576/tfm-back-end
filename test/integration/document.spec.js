@@ -48,7 +48,7 @@ describe("Document integration test", () => {
         expect(res.body.message).toBe(`Document "${mockDocument.documentName}" uploaded successfully`);
     });
 
-    test('Upload document with unsupported file type', async () => {
+    test('Upload document KO - Unsupported file type', async () => {
         const mockDocument = {
             documentName: 'Test Document',
             data: Buffer.from('Test data'),
@@ -65,7 +65,7 @@ describe("Document integration test", () => {
         expect(res.body.error).toBe('Unsupported file type');
     });
 
-    test('Upload document with missing file', async () => {
+    test('Upload document KO - Missing file', async () => {
         const res = await request(app)
             .post('/documents')
             .set('Content-Type', 'multipart/form-data')

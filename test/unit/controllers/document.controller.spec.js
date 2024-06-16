@@ -33,7 +33,7 @@ describe('Document Controller', () => {
         expect(documentService.createDocument).toHaveBeenCalledTimes(1);
     });
 
-    test('Upload document with unsupported file type', async () => {
+    test('Upload document KO - Unsupported file type', async () => {
         const res = await request(app)
             .post('/documents')
             .attach('file', mockDocument.data, { filename: mockDocument.documentName, contentType: "image/gif" })
@@ -43,7 +43,7 @@ describe('Document Controller', () => {
         expect(res.body.error).toBe('Unsupported file type');
     });
 
-    test('Upload document with missing file', async () => {
+    test('Upload document KO - Missing file', async () => {
         const res = await request(app)
             .post('/documents')
             .set('Content-Type', 'multipart/form-data')
@@ -52,7 +52,7 @@ describe('Document Controller', () => {
         expect(res.body.error).toBe('No file provided');
     });
 
-    test('Upload document with existing document name', async () => {
+    test('Upload document KO - File with existing document name', async () => {
         documentService.readDocumentByDocumentName.mockResolvedValue(mockDocument);
 
         const res = await request(app)
@@ -110,7 +110,7 @@ describe('Document Controller', () => {
         expect(documentService.readDocumentByDocumentId).toHaveBeenCalledTimes(1);
     });
 
-    test('Read document KO - document not found', async () => {
+    test('Read document KO - Document not found', async () => {
         documentService.validateDocumentOwnership.mockResolvedValue(new NotFoundError('Document not found'));
         documentService.readDocumentByDocumentId.mockResolvedValue(null);
 
@@ -123,7 +123,7 @@ describe('Document Controller', () => {
     });
 
 
-    test('delete document OK', async () => {
+    test('Delete document OK', async () => {
         documentService.validateDocumentOwnership.mockResolvedValue();
         documentService.deleteDocumentByDocumentId.mockResolvedValue();
 
@@ -134,7 +134,7 @@ describe('Document Controller', () => {
         expect(documentService.deleteDocumentByDocumentId).toHaveBeenCalledTimes(1);
     });
 
-    test('delete document KO - document not found', async () => {
+    test('Delete document KO - Document not found', async () => {
         documentService.validateDocumentOwnership.mockRejectedValue(new NotFoundError('Document not found'));
         documentService.deleteDocumentByDocumentId.mockResolvedValue();
 
@@ -146,7 +146,7 @@ describe('Document Controller', () => {
         }
     });
 
-    test('delete document KO - forbidden', async () => {
+    test('Delete document KO - forbidden', async () => {
         documentService.validateDocumentOwnership.mockRejectedValue(new ForbiddenError('You are not allowed to perform this operation on this document'));
         documentService.deleteDocumentByDocumentId.mockResolvedValue();
 
@@ -158,7 +158,7 @@ describe('Document Controller', () => {
         }
     });
 
-    test('delete documents of user OK', async () => {
+    test('Delete documents of user OK', async () => {
         documentService.deleteDocumentsByUserId.mockResolvedValue();
 
         const res = await request(app).delete('/documents');
@@ -168,7 +168,7 @@ describe('Document Controller', () => {
         expect(documentService.deleteDocumentsByUserId).toHaveBeenCalledTimes(1);
     });
 
-    test('delete documents of user KO', async () => {
+    test('Delete documents of user KO', async () => {
         documentService.deleteDocumentsByUserId.mockRejectedValue(new Error());
 
         try {

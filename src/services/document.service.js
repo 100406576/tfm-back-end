@@ -1,6 +1,6 @@
 const Document = require('../models/document.model');
-const  NotFoundError = require('../errors/notFound.error');
-const  ForbiddenError = require('../errors/forbidden.error');
+const NotFoundError = require('../errors/notFound.error');
+const ForbiddenError = require('../errors/forbidden.error');
 
 const createDocument = async (documentName, data, mimetype, user_id) => {
     const document = await Document.create({

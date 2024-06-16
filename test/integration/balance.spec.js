@@ -1,7 +1,6 @@
 const request = require('supertest');
 const { app, syncDatabase } = require('../../src/app.js');
 const authMiddleware = require('../../src/middlewares/auth.middleware.js');
-const userService = require('../../src/services/user.service.js');
 const { PORT } = require('../../src/config/config.js');
 
 const authMiddlewareMock = (req, res, next) => {
@@ -79,7 +78,7 @@ describe("Balance integration test", () => {
         expect(res.body).toHaveProperty('error', 'Missing required fields');
     });
 
-    test("Create Balance KO - Validation Error timeinterval", async () => {
+    test("Create Balance KO - Validation Error timeInterval", async () => {
         const body = {
             property_id: propertyId,
             dateRange: {

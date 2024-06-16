@@ -20,7 +20,7 @@ describe('Auth Middleware', () => {
         }
     });
 
-    test('Auth KO the token is invalid', async () => {
+    test('Auth KO - Token is invalid', async () => {
         jwt.decode.mockImplementation(() => {
             throw new Error();
         });
@@ -32,7 +32,7 @@ describe('Auth Middleware', () => {
         }
     });
 
-    test('Auth KO - token has expired', async () => {
+    test('Auth KO - Token has expired', async () => {
         jwt.decode.mockReturnValue({
             expiresAt: moment().subtract(1, 'days').unix()
         });

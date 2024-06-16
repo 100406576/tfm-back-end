@@ -66,3 +66,4 @@ describe('User Model', () => {
         expect(deletedUser).toBe(1);
     });
 });
+

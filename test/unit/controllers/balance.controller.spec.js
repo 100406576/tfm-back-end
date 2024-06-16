@@ -52,7 +52,7 @@ describe('Balance Controller', () => {
         }
     });
 
-    test('Create balance KO - Invalid time interval', async () => {
+    test('Create balance KO - Invalid timeInterval', async () => {
         try {
             await request(app).post('/balances').send({
                 property_id: "1",

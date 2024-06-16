@@ -16,9 +16,9 @@ async function syncDatabase() {
 }
 
 const corsOptions = {
-    exposedHeaders: 'Authorization',
-  };
-  
+  exposedHeaders: 'Authorization',
+};
+
 app.use(cors(corsOptions));
 
 // Middlewares

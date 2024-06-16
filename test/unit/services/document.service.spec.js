@@ -23,7 +23,7 @@ describe('Document Service', () => {
         Document.destroy.mockClear();
     });
 
-    test('createDocument', async () => {
+    test('createDocument OK', async () => {
         Document.create.mockResolvedValue(mockDocument);
 
         const document = await documentService.createDocument('Test Document', Buffer.from('Test data'), 'text/plain', '1');
