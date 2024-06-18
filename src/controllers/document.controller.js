@@ -1,5 +1,8 @@
 const multer = require('multer');
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 } // 5 MB
+});
 const documentService = require('../services/document.service');
 const { ValidationError } = require('sequelize');
 const ConflictError = require('../errors/conflict.error');
